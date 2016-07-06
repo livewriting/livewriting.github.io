@@ -3,7 +3,7 @@
   <head>
     <title>Example 5 : Temporal Typography</title>
     <link rel="stylesheet" type="text/css" href="./main.css"/>
-<script id="vertex" type="text/x-glsl-vert">
+    <script id="vertex" type="text/x-glsl-vert">
       varying vec2 vUv;
     //  varying float xCoord;
       uniform float rightMostXCoord;
@@ -31,7 +31,7 @@
         vec2 uv = vUv;
         //uv.y = uv.y + sin(tan(uv.x) * 1000.0)*0.01 * volume2 + sin(uv.x * 2000.0)*0.001 * volume2;
        //         uv.y = uv.y + timeDomain[i];
-        
+
     //uv.x = uv.x + sin(tan(uv.y) * 1000.0)*0.02 * volume2+ sin(uv.x * 2000.0)*0.01 * volume2;
         vec4 diffuse = texture2D(map, uv);
         gl_FragColor = diffuse;
@@ -44,13 +44,13 @@
     <script src="dat.gui.min.js"></script>
     <script src="nfme.js"></script>
     <script src="nfme5_demo.js"></script>
-        
+
 
     <style>
       html {
         background-color: #fff;
       }
-        
+
       * {
         margin: 0;
         padding: 0;
@@ -58,9 +58,8 @@
     </style>
   </head>
   <body>
-    
-  
-        
+
+
+
   </body>
 </html>
-
