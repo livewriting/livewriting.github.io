@@ -21,10 +21,12 @@ padding:15px;
 }
 
 .centre {
+  text-align: center;
 }
 
-
-
+.main-editor{
+  opacity:0.4;
+}
 a:link {
 color:inherit;
 text-decoration: none;

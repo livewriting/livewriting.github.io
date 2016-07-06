@@ -121,7 +121,19 @@ window.onload = function() {
     if (!hasGetUserMedia()) {
         alert('getUserMedia() is not supported in your browser. Please visit http://caniuse.com/#feat=stream to see web browsers available for this demo.');
     }
-//
+
+    var options = {
+      lineNumbers: false,
+      smartIndent : false,
+      indentUnit:0,
+      lineWrapping:true,
+      mode:"Plain Text",
+      height:"100%"
+    };
+
+    var editor = CodeMirror.fromTextArea(document.getElementById("livetext"),options);
+    editor.setSize("96%", "98%");
+
     $("#hide").click(function(){
         // remove select
         $("#micselect").hide();
@@ -781,14 +793,15 @@ window.onload = function() {
          var keycode = ev.which;
          if(DEBUG){
             $("#keyup_debug").html(keycode);
-    //        $("#start_down_debug").html(pos[0]);
-    //        $("#end_down_debug").html(pos[1]);
+            //        $("#start_down_debug").html(pos[0]);
+            //        $("#end_down_debug").html(pos[1]);
 
             keyup_debug_color_index++;
             keyup_debug_color_index%=randomcolor.length;
             $("#keyup_debug").css("background-color", randomcolor[keyup_debug_color_index]);
         }
     };
+
     var currentOuput = 0.0; // noise burst output
 
     window.onkeypress = function(ev){
@@ -932,24 +945,24 @@ window.onload = function() {
 
 
         //gain.connect(pitch_convolver);
-      //  gain.connect(level_reverb);
-       // pitch_convolver.connect(compressor);
-    //    gain.connect(context.destination);
+        //  gain.connect(level_reverb);
+        // pitch_convolver.connect(compressor);
+        //    gain.connect(context.destination);
 
         var randomPitch = 24 + getRandomInt(-3,12);
 
         var osc = new Oscillator(randomPitch, 'triangle');
                 var adsr = new ADSR();
                 osc.node.connect(adsr.node);
-      //          adsr.node.connect(level_reverb);
-             //   osc.adsr = adsr;
+                //          adsr.node.connect(level_reverb);
+                //   osc.adsr = adsr;
                // oscillator_list[24] = osc;
-    //              }
+               //              }
 
 
-            osc.play(0);
-            osc.stop(context.currentTime + 3.2);
-            adsr.play(0,0.1,0.1,2,1);
+        osc.play(0);
+        osc.stop(context.currentTime + 3.2);
+        adsr.play(0,0.1,0.1,2,1);
 
         var currentTime = (new Date()).getTime();
         if (lastKeyTime == 0)
@@ -958,19 +971,17 @@ window.onload = function() {
         if ((currentTime - lastKeyTime) / 1000.0 > 0.5)
             interval = 1;
         //interval = (currentTime - lastKeyTime);
-      //  console.log(interval);
+        //  console.log(interval);
         lastKeyTime = currentTime;
          if(DEBUG){
             $("#keypress_debug").html(keycode);
-    //        $("#start_down_debug").html(pos[0]);
-    //        $("#end_down_debug").html(pos[1]);
+              //        $("#start_down_debug").html(pos[0]);
+              //        $("#end_down_debug").html(pos[1]);
 
             keypress_debug_color_index++;
             keypress_debug_color_index%=randomcolor.length;
             $("#keypress_debug").css("background-color", randomcolor[keypress_debug_color_index]);
         }
-
-
 
         if (state%2== 1){ // alternate by question mark.
             var source = context.createBufferSource();
@@ -1000,22 +1011,22 @@ window.onload = function() {
             fbank.set('scale', scaleModel[getRandomInt(0,3)].value, WX.now + 4, 2);
            // fbank.set('pitch', fbank_pitchset[getRandomInt(0,3)]);
             if (lineindex[currentPage] == 2 && currentPage == 0){ // the third line the first page
-                level_reverb.gain.linearRampToValueAtTime(0.0, context.currentTime )
-                level_reverb.gain.linearRampToValueAtTime(1.0, context.currentTime + 30)
+              level_reverb.gain.linearRampToValueAtTime(0.0, context.currentTime )
+              level_reverb.gain.linearRampToValueAtTime(1.0, context.currentTime + 30)
 
-                var osc = new Oscillator(22, 'triangle');
-                var adsr = new ADSR();
-                osc.node.connect(adsr.node);
-                adsr.node.connect(level_reverb);
+              var osc = new Oscillator(22, 'triangle');
+              var adsr = new ADSR();
+              osc.node.connect(adsr.node);
+              adsr.node.connect(level_reverb);
 
-                osc.play(0);
-               // osc.stop(context.currentTime + 300);
+              osc.play(0);
+              // osc.stop(context.currentTime + 300);
               //adsr.play(0,30,120,30,120,0.05,0.025);
-                adsr.noteOn(0,30,600,0.07,0.03);
-                osc.node.detune.linearRampToValueAtTime(0.0, context.currentTime);
-                osc.node.detune.linearRampToValueAtTime(0.0, context.currentTime + 30);
-                osc.node.detune.linearRampToValueAtTime(900, context.currentTime + 120);
-                osc.node.detune.linearRampToValueAtTime(200, context.currentTime + 240);
+              adsr.noteOn(0,30,600,0.07,0.03);
+              osc.node.detune.linearRampToValueAtTime(0.0, context.currentTime);
+              osc.node.detune.linearRampToValueAtTime(0.0, context.currentTime + 30);
+              osc.node.detune.linearRampToValueAtTime(900, context.currentTime + 120);
+              osc.node.detune.linearRampToValueAtTime(200, context.currentTime + 240);
             }
             else if (lineindex[currentPage] == 4 && currentPage == 0){ // thr fifth line the first page
                 var shaderMaterial = new THREE.ShaderMaterial({
@@ -1133,4 +1144,5 @@ if (!pauseFlag) return;
     };
 
 
-};
+
+}; // end of window.onload = function() {
