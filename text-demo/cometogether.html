@@ -1,0 +1,212 @@
+
+<html>
+  <head>
+    <title>Come Together</title>
+    <link rel="stylesheet" type="text/css" href="./main.css"/>
+
+  </head>
+    <link rel="stylesheet" type="text/css" href=
+      http://web.eecs.umich.edu/~snaglee/public/stylesheets/jquery-ui.min.css>
+    <script src="http://web.eecs.umich.edu/~snaglee/public/javascripts/jquery-1.11.1.min.js" type="text/javascript"></script>
+      <script src="http://web.eecs.umich.edu/~snaglee/public/javascripts/jquery-ui.min.js" type="text/javascript"></script>
+<script src="../js/jquery-1.11.1.min.js" type="text/javascript"></script>
+<script src="../js/jquery-ui.min.js" type="text/javascript"></script>
+        <link rel="stylesheet" type="text/css" href="../css/jquery-ui.min.css"/>
+
+<script type="text/javascript">
+    var BOOK="Here come old flattop, he come grooving up slowly\nHe got joo-joo eyeball, he one holy roller\nHe got hair down to his knee\nGot to be a joker he just do what he please\n\nHe wear no shoeshine, he got toe-jam football\nHe got monkey finger, he shoot coca-cola\nHe say \"I know you, you know me\"\nOne thing I can tell you is you got to be free\nCome together right now over me\n\nHe bag production, he got walrus gumboot\nHe got Ono sideboard, he one spinal cracker\nHe got feet down below his knee\nHold you in his armchair you can feel his disease\nCome together right now over me\n\nHe roller-coaster, he got early warning\nHe got muddy water, he one mojo filter\nHe say \"One and one and one is three\"\nGot to be good-looking cos he's so hard to see\nCome together right now over me\n";
+   var startTime = (new Date()).getTime();
+        var context = new AudioContext();
+        var sourceNode;
+        var audioBuffer;
+        var tickIndex= -1;
+        var toggle = true;
+    
+    $(document).ready(function () {
+        var delimterspan ;
+        var data ={};
+        
+        
+        $("#container").append("<div>");
+        
+        function init(){
+            undostack = [];
+            var span = $('<span />').attr('id',"delimiter0").attr('index',0).addClass("output_data delimiter red").html("|");
+            $("#container").append(span);
+            data.length = 0;
+
+            for (var i=0; i<BOOK.length; i++){
+                var code = BOOK.charAt(i);
+                if ( code=="\n"){
+                    $("#container").append("<br>");
+                    $("#container").append("<span  id=\"delimiter"+i+"\" index = "+i+" class=\"delimiter red\">|</span>");
+                }
+                else{
+                    span = $('<span />').attr('id',i).addClass("text").html(code);
+                    $("#container").append(span);
+                    if (code == " "){
+                        var temp_span = $('<span />').attr('id',"delimiter" + (i+1)).addClass("delimiter red").attr('index',i+1).html("|");
+                        span.after(temp_span);
+                       
+                    }
+                    span.click(function(){
+                        var i = $(this).attr('id');
+                        $(this).before("<span id=\"delimiter"+i+"\" index = "+i+" class=\"delimiter red\">|</span>");
+                        undostack.push(i);
+                        delimterspan = $(".delimiter");
+                    }
+                              );
+                }   
+            }
+            delimterspan = $(".delimiter");
+        }
+        function initData(){
+            
+            $("#output").remove();
+            $(".blue").toggleClass("blue");
+
+            data ={};
+            data.length=0;
+            
+            tickIndex=-1;
+        }
+        init();
+        $("#container").append("</div>");
+        $("#reset").button().click(function(){
+            $("#container").empty();
+            
+            init();
+            initData();
+        });
+        $("#undo").button().click(function(){
+            var i = undostack.pop();
+            $("#delimiter"+i).remove();
+            delimterspan = $(".delimiter");
+
+           /* if( data.length> 0){
+                data.length--;
+                data[data.length]=null;
+                $("#dataindex"+data.length).remove();
+                $("#outputindex"+data.length).remove();
+            }*/
+        });
+        $("#start").button().click(function(){
+            if (toggle){
+                initData();
+                loadSound("01-Come_Together.mp3");
+            }
+            else
+                stopSound();
+            toggle = !toggle;
+
+        });
+        
+        
+        $("#tick").button().click(function(){
+            var timestamp =  (new Date()).getTime() - startTime;
+            tickIndex++;
+            var span = delimterspan[tickIndex];
+            var i = $(span).attr("index")
+            data[tickIndex] = { "str_index":i, "timestamp":timestamp};
+            data.length++;
+            $("#output").append("<div id=\"outputindex"+tickIndex+"\" class=\"output_data\">num : " + tickIndex + " strindex : "+i+" timestamp:" + timestamp + "</div>");
+            $(".blue").toggleClass("blue");
+            $(span).nextUntil(delimterspan[tickIndex+1]).addClass("blue");
+        });
+        $("#json").button().click(function(){
+            $("#json_output").html(JSON.stringify(data));
+        });
+    });
+    
+    function setupAudioNodes() {
+        sourceNode = context.createBufferSource();
+        sourceNode.buffer = audioBuffer;
+        // and connect to destination, if you want audio
+        sourceNode.connect(context.destination);
+    }
+    // load the specified sound
+    function loadSound(url) {
+        var request = new XMLHttpRequest();
+        request.open('GET', url, true);
+        request.responseType = 'arraybuffer';
+
+        // When loaded decode the data
+        request.onload = function() {
+
+            // decode the data
+            context.decodeAudioData(request.response, function(buffer) {
+                audioBuffer = buffer;
+                // when the audio is decoded play the sound
+                playSound();
+                startTime = (new Date()).getTime();
+                tickIndex= -1;
+            }, onError);
+        }
+        request.send();
+    }
+
+
+    function playSound() {
+        setupAudioNodes();
+        sourceNode.start(0);
+     //   sourceNode.loop = true;
+    }
+    
+    function stopSound() {
+        sourceNode.stop(0);
+  //      sourceNode.noteOff(0);
+    }
+    
+    // log if an error occurs
+    function onError(e) {
+        console.log(e);
+    }
+    
+    
+    
+</script>
+    <style>
+    html {
+        background-color: #fff;
+    }
+        body{
+            font-size:20px;
+        }
+    .twocolumn{
+      float: left;
+      width: 50%;
+    }
+        .red{
+            color:red;
+            font-weight: bold;
+        }
+        .blue{
+            color:blue;
+            font-weight: bold;
+        }
+    * {
+        margin: 0;
+        padding: 0;
+    }
+    </style>  
+<body>
+    
+    <div id="container" class = "twocolumn">
+    </div>
+    <div class = "twocolumn">
+        <div>
+            <button id = "reset" >reset</button> 
+            <button id = "undo" >undo</button> 
+            <button id = "start" >start record</button> 
+            <button id = "tick" >Tick!</button> 
+            <button id = "json" >json</button> 
+        </div>
+        <div id="output">
+            output<br>
+        </div>
+    </div>
+    <div id="json_output"></div>
+    
+</body>
+</html>
+

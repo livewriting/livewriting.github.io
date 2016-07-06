@@ -1,0 +1,87 @@
+
+<html>
+  <head>
+    <title>Example 2 : Temporal Typography</title>
+    <link rel="stylesheet" type="text/css" href="./main.css"/>
+      <link rel="stylesheet" type="text/css" href="./jquery-ui.min.css"/>
+
+<script id="vertex" type="text/x-glsl-vert">
+      uniform float volume;
+      uniform float time;
+      uniform vec2 center;
+      uniform float startIndex;
+      uniform float endIndex;
+      varying vec2 vUv;
+      varying float opacity;
+      attribute float strindex;
+  
+      void main() {
+        vec4 fpos = vec4( position, 1.0 );
+        if (strindex >= startIndex && strindex < endIndex){
+            fpos.z += volume*20.0;// *  time;
+            fpos.y -= (fpos.y - center.y) * 0.03;
+            opacity = 0.9;
+        }else{
+            fpos.z += volume*5.0;//+ time;
+            opacity = 0.2;
+        }
+        
+        vec4 mvPosition = modelViewMatrix * fpos;
+        vec4 p = projectionMatrix * mvPosition;
+        vUv = uv;
+        gl_Position = p;
+      }
+    </script>
+      <script id="fragment" type="text/x-glsl-frag">
+      varying vec2 vUv;
+      uniform sampler2D map;
+      uniform float avg_index;
+      varying float opacity;
+      void main() {
+      //vec4 one = vec4(1.0,1.0,1.0,0);
+        vec4 diffuse = texture2D(map, vUv);
+        vec4 diffuse_red = diffuse;//vec4(diffuse.x,diffuse.y,diffuse.z,1.0);
+        diffuse_red.z = 1.0;
+        diffuse_red.x = opacity;
+    //    vec4 diffuse_red = vec4(1.0, diffuse.g, diffuse.b, 1.0);
+   /*     if (diffuse_red.r <= 1.0)
+       {
+            diffuse_red.g = 1.0;
+            diffuse_red.b = 1.0;
+        }
+     */   //vec4 color = vec4(1.0,0.0,0.0, 1.0);
+        vec4 mix_diffuse = mix(diffuse, diffuse_red,avg_index * opacity);
+        //vec4 mix_diffuse = mix(diffuse, diffuse_red,avg_index );
+        gl_FragColor = mix_diffuse;//vec4(mix_diffuse.rgb, opacity);
+      }
+    </script>
+      
+      <script src="jquery-1.11.1.min.js" type="text/javascript"></script>
+        <script src="jquery-ui.min.js" type="text/javascript"></script>
+
+    <script src="Three.js"></script>
+    <script src="nfme.js"></script>
+    <script src="nfme2_demo.js"></script>
+        
+
+    <style>
+      html {
+        background-color: #fff;
+      }
+        
+      * {
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+  </head>
+  <body>
+      <div id="container">
+
+      </div>
+      <div align = center>                   
+          <button id="playstop">Play</button>
+      </div>
+  </body>
+</html>
+

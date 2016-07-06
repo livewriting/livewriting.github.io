@@ -1,0 +1,67 @@
+
+<html>
+  <head>
+    <title>Example 3 : Temporal Typography</title>
+    <link rel="stylesheet" type="text/css" href="./main.css"/>
+<script id="vertex" type="text/x-glsl-vert">
+        uniform float freqBin[80];
+        uniform float time;
+      uniform float volume;
+
+        attribute float attCenter;
+      varying vec2 vUv;
+    varying float color ;
+      void main() {
+        vec4 fpos = vec4( position, 1.0 );
+     //   fpos.z += volume*5.0 ;//+ time;
+        int x = int(fpos.x);
+        fpos.y = attCenter + (fpos.y - attCenter) * (0.8+freqBin[x]/128.0);
+        vec4 mvPosition = modelViewMatrix * fpos;
+        vec4 p = projectionMatrix * mvPosition;
+        vUv = uv;
+       // color = (attCenter );
+        gl_Position = p;
+      }
+    </script>
+      <script id="fragment" type="text/x-glsl-frag">
+      varying vec2 vUv;
+      varying float color;
+      uniform sampler2D map;
+      void main() {
+        vec2 uv = vUv;
+     //   uv.y = uv.y + sin(uv.x * 5000.0)*0.003;
+        vec4 diffuse = texture2D(map, uv);
+        //gl_FragColor = mix(diffuse, vec4(1.0,0,0,1), 0.5);
+        gl_FragColor = diffuse;
+     //   gl_FragColor = vec4(1.0,0,0,1);
+     //   gl_FragColor = vec4(color,0,0,1);
+        
+      }
+    </script>
+    <script src="./waax.min.js"></script>
+    <script src="./mui/bower_components/webcomponentsjs/webcomponents.min.js"></script>
+
+    <script src="Three.js"></script>
+    <script src="dat.gui.min.js"></script>
+    <script src="nfme.js"></script>
+    <script src="nfme3_demo.js"></script>
+        
+
+    <style>
+      html {
+        background-color: #fff;
+      }
+        
+      * {
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+  </head>
+  <body>
+    
+  
+        
+  </body>
+</html>
+

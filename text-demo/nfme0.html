@@ -1,0 +1,110 @@
+
+<html>
+  <head>
+    <title>WebGL Reader</title>
+    
+<script id="vertex" type="text/x-glsl-vert">
+      varying float vZ;
+      uniform float time;
+      uniform float effectAmount;
+      varying vec2 vUv;
+      varying float vol;
+      
+      mat3 rotateAngleAxisMatrix(float angle, vec3 axis) {
+        float c = cos(angle);
+        float s = sin(angle);
+        float t = 1.0 - c;
+        axis = normalize(axis);
+        float x = axis.x, y = axis.y, z = axis.z;
+        return mat3(
+          t*x*x + c,    t*x*y + s*z,  t*x*z - s*y,
+          t*x*y - s*z,  t*y*y + c,    t*y*z + s*x,
+          t*x*z + s*y,  t*y*z - s*x,  t*z*z + c
+        );
+      }
+
+      vec3 rotateAngleAxis(float angle, vec3 axis, vec3 v) {
+        return rotateAngleAxisMatrix(angle, axis) * v;
+      }
+
+      void main() {
+        float scale = 1.1;
+        float idx = floor(position.y/scale)*80.0 + floor(position.x/scale);
+        vec3 corner = vec3(floor(position.x/scale)*scale, floor(position.y/scale)*scale, 0.0);
+        vec3 mid = corner + vec3(0.5, 0.5, 0.0);
+        vec3 rpos = rotateAngleAxis(idx+time, vec3(mod(idx,16.0), -8.0+mod(idx,15.0), 1.0), position - mid) + mid;
+       
+       // vec4 fpos = vec4( mix(position,rpos,effectAmount), 1.0 );
+        vec4 fpos = vec4( position, 1.0 );
+        fpos.x += 0.0;
+   //     fpos.z += 2.2*effectAmount;
+    //    fpos.y += 0.2*effectAmount;
+        vec4 mvPosition = modelViewMatrix * fpos;
+    //    mvPosition.y += 10.0*sin(time*0.5+mvPosition.x/25.0)*effectAmount*;
+      //  mvPosition.x -= 10.0*cos(time*0.5+mvPosition.y/25.0)*effectAmount*;
+        vec4 p = projectionMatrix * mvPosition;
+        vUv = uv;
+        vZ = p.z;
+        vol = effectAmount;
+        gl_Position = p;
+      }
+    </script>
+      <script id="fragment" type="text/x-glsl-frag">
+      varying float vZ;
+      varying vec2 vUv;
+      varying float vol;
+      uniform float time;
+      uniform float effectAmount;
+      uniform vec2 size;
+      uniform sampler2D map;
+      highp float rand(vec2 co)
+        {
+            highp float a = 12.9898;
+            highp float b = 78.233;
+            highp float c = 43758.5453;
+            highp float dt= dot(co.xy ,vec2(a,b));
+            highp float sn= mod(dt,3.14);
+            return fract(sin(sn) * c);
+        }
+      void main() {
+        vec2 d = gl_FragCoord.xy - (0.5+0.02*sin(vol))*size*vec2(1.0, 1.0);
+       // vec2 vUv2 = vec2(vUv.x,vUv.y+vol*rand(d)*0.03);
+        vec4 diffuse = texture2D(map, vUv);
+        float a = sin(time*0.3)*2.0*3.14159;
+        d = vec2( d.x*cos(a) + d.y*sin(a),
+                 -d.x*sin(a) + d.y*cos(a));
+        vec2 rg = vec2(0.0)+abs(d)/(0.5*size);
+        float b = abs(vZ) / 540.0;
+        gl_FragColor = mix(diffuse, vec4(rg,b,diffuse.a), effectAmount);
+    //    gl_FragColor = diffuse;
+    //    gl_FragCoord = vec4(gl_FragCoord.x, gl_FragCoord.y, gl_FragCoord.z, 1.0);
+      }
+    </script>
+    <script src="./waax.min.js"></script>
+    <script src="./mui/bower_components/webcomponentsjs/webcomponents.min.js"></script>
+
+    <script src="Three.js"></script>
+    <script src="dat.gui.min.js"></script>
+    <script src="nfme_demo.js"></script>
+        
+
+    <style>
+      html {
+        background-color: #fff;
+      }
+        canvas{
+            border:3px;
+        }
+      * {
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+  </head>
+  <body>
+    
+  
+        
+  </body>
+</html>
+

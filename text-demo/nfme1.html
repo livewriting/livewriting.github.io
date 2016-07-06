@@ -1,0 +1,54 @@
+
+<html>
+  <head>
+    <title>Example 1 : Temporal Typography</title>
+    <link rel="stylesheet" type="text/css" href="./main.css"/>
+<script id="vertex" type="text/x-glsl-vert">
+      uniform float volume;
+      uniform float time;
+      uniform vec2 center;
+      varying vec2 vUv;
+  
+      void main() {
+        vec4 fpos = vec4( position, 1.0 );
+        fpos.z += volume*5.0 ;//+ time;
+        vec4 mvPosition = modelViewMatrix * fpos;
+        vec4 p = projectionMatrix * mvPosition;
+        vUv = uv;
+        gl_Position = p;
+      }
+    </script>
+      <script id="fragment" type="text/x-glsl-frag">
+      varying vec2 vUv;
+      uniform sampler2D map;
+      void main() {
+        vec4 diffuse = texture2D(map, vUv);
+        //gl_FragColor = mix(diffuse, vec4(1.0,0,0,1), 0.5);
+        gl_FragColor = diffuse;
+      }
+    </script>
+   
+    <script src="Three.js"></script>
+    <script src="dat.gui.min.js"></script>
+    <script src="nfme.js"></script>
+    <script src="nfme1_demo.js"></script>
+        
+
+    <style>
+      html {
+        background-color: #fff;
+      }
+        
+      * {
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+  </head>
+  <body>
+    
+  
+        
+  </body>
+</html>
+
