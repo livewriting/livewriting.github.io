@@ -1,0 +1,7 @@
+.main-editor{
+  opacity: 0.4;
+  position: absolute;
+  left: 0;
+  height: 100%;
+  right: 0;
+}
