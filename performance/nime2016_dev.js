@@ -1140,8 +1140,8 @@ if(enableSound){
                 var shaderMaterial = new THREE.ShaderMaterial({
                     uniforms : uniforms,
                     attributes : attributes,
-                    vertexShader : document.querySelector('#vertex0').textContent,
-                    fragmentShader : document.querySelector('#fragment0').textContent
+                    vertexShader : document.querySelector('#vertex2').textContent,
+                    fragmentShader : document.querySelector('#fragment2').textContent
                 });
                 shaderMaterial.transparent = true;
                 shaderMaterial.depthTest = false;
