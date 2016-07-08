@@ -419,7 +419,7 @@ if(enableSound){
   //  var scaleX = 5, scaleY = 12;
 
     var rightMostPosition = 0;
-    var rightMostXCoord = -10000;
+    var rightMostXCoord = 50;
     var letterPerLine = 50;
     var linePerScreen = 10;
     var offset = 1.0;
@@ -513,6 +513,10 @@ if(enableSound){
     }
 
     var shiftLetterHorizontallyCodeMirror = function(object,from, shiftAmount){
+      if (rightMostPosition<from+shiftAmount){
+          rightMostXCoord = from+shiftAmount*scaleX+offset;
+          rightMostPosition = from+shiftAmount
+      }
       var strIndex = object.index;
       var sizeFactor = object.sizeFactor;
       console.log("move the ", strIndex,"th letter ",shiftAmount," spaces.");
@@ -543,6 +547,14 @@ if(enableSound){
     }
 */
     var addLetterCodeMirror = function (line, ch, sizeFactor, char){
+      if (rightMostPosition<ch){
+          rightMostXCoord = ch*scaleX+offset;
+          rightMostPosition = ch;
+      }
+      /*
+      rightMostXCoord = ch*scaleX+offset;// this creates an really interesting animations
+      */
+
       var strIndex = pageStrIndex[currentPage];
       pageStrIndex[currentPage]++;
       cmGrid[line][ch] = {index:strIndex, sizeFactor:sizeFactor, char: char};
@@ -750,8 +762,6 @@ if(enableSound){
             noiseBurstAnalyser.getByteTimeDomainData(amplitudeArray3);
             var noiseVolume = getAverageVolume(amplitudeArray3);
             uniforms.noise.value = noiseVolume[0] / 128.0 * 0.005;
-
-
         }
 
         var resultArr = getAverageVolume(amplitudeArray);
@@ -874,7 +884,7 @@ if(enableSound){
                 interval = 1.0;
                 uniforms.time.value = 0;
                 //for (var i=0; i< numPage-1; i++)
-        //        books[1].material = shaderMaterial;
+                books[1].material = shaderMaterial;
             }
 
         }
@@ -1140,21 +1150,21 @@ if(enableSound){
                 var shaderMaterial = new THREE.ShaderMaterial({
                     uniforms : uniforms,
                     attributes : attributes,
-                    vertexShader : document.querySelector('#vertex0').textContent,
+                    vertexShader : document.querySelector('#vertex1').textContent,
                     fragmentShader : document.querySelector('#fragment1').textContent
                 });
                 shaderMaterial.transparent = true;
                 shaderMaterial.depthTest = false;
                 // turn on reverb gain slowly.
-            //    for (var i=0; i< numPage; i++)
-              //      books[i].material = shaderMaterial;
+                for (var i=0; i< numPage; i++)
+                    books[i].material = shaderMaterial;
 
            }
 
 
         }
 
-  //   books[currentPage].geometry = geo[currentPage][geoindex];
+     books[currentPage].geometry = geo[currentPage][geoindex];
      // let's play pause until
 
      if (!pauseFlag) return;
