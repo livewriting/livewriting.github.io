@@ -114,7 +114,7 @@ Oscillator.prototype.stop = function( time){
 window.onload = function() {
     var DEBUG = false;
     var enableSound = true;
-    var enableCodeMirror = false;
+    var enableCodeMirror = true;
     var  randomcolor = [ "#c0c0f0", "#f0c0c0", "#c0f0c0", "#f090f0", "#90f0f0", "#f0f090"],
        keyup_debug_color_index=0,
        keydown_debug_color_index=0,
@@ -837,7 +837,7 @@ if(enableSound){
 
             // backspace is not supported for now. j
             ev.preventDefault();
-          
+
         }
         else if (keycode == 18){
             filterOn = !filterOn;
@@ -910,7 +910,7 @@ if(enableSound){
             keydown_debug_color_index%=randomcolor.length;
             $("#keydown_debug").css("background-color", randomcolor[keydown_debug_color_index]);
         }
-          // THIS IS OLD onkeypress part starting
+         // THIS IS OLD onkeypress part starting
         var keycode = ev.which;
         //  return;
         if(ev.ctrlKey == true){
