@@ -813,6 +813,22 @@ if(enableSound){
     var keyInterval = 0;
     var keyIntervalCnt = 0;
 
+    window.onkeyup = function(ev){
+
+         var keycode = ev.which;
+         if(DEBUG){
+            $("#keyup_debug").html(keycode);
+            //        $("#start_down_debug").html(pos[0]);
+            //        $("#end_down_debug").html(pos[1]);
+
+            keyup_debug_color_index++;
+            keyup_debug_color_index%=randomcolor.length;
+            $("#keyup_debug").css("background-color", randomcolor[keyup_debug_color_index]);
+        }
+    };
+
+    var currentOuput = 0.0; // noise burst output
+
 
     window.onkeydown = function(ev){
         if(enableCodeMirror)editor.focus();
@@ -907,25 +923,7 @@ if(enableSound){
             keydown_debug_color_index%=randomcolor.length;
             $("#keydown_debug").css("background-color", randomcolor[keydown_debug_color_index]);
         }
-    };
-
-    window.onkeyup = function(ev){
-
-         var keycode = ev.which;
-         if(DEBUG){
-            $("#keyup_debug").html(keycode);
-            //        $("#start_down_debug").html(pos[0]);
-            //        $("#end_down_debug").html(pos[1]);
-
-            keyup_debug_color_index++;
-            keyup_debug_color_index%=randomcolor.length;
-            $("#keyup_debug").css("background-color", randomcolor[keyup_debug_color_index]);
-        }
-    };
-
-    var currentOuput = 0.0; // noise burst output
-
-    window.onkeypress = function(ev){
+        
         var keycode = ev.which;
         //  return;
         if(ev.ctrlKey == true){
@@ -944,7 +942,6 @@ if(enableSound){
         {
             strPage[currentPage] = "";
         }
-
 
         // update the visual first.
         if (enableCodeMirror){
