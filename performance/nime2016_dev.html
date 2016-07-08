@@ -10,7 +10,7 @@
         varying vec2 vUv;
         uniform float volume;
         uniform int coloredStr[27];
-        attribute float charIndex;
+        attribute float alphabetIndex;
         varying float color;
 
         void main() {
@@ -21,10 +21,10 @@
           gl_Position = p;
 
           color = 0.0;
-          if(coloredStr[int(charIndex)] == 1){
+          if(coloredStr[int(alphabetIndex)] == 1){
             color = volume;
           }
-          if(coloredStr[int(charIndex)] == 2){
+          if(coloredStr[int(alphabetIndex)] == 2){
             color = 1.0-volume;
           }
         }
@@ -54,7 +54,7 @@
         uniform float timeDomain[512];
         uniform float volume;
         uniform int coloredStr[27];
-        attribute float charIndex;
+        attribute float alphabetIndex;
         varying float color;
         void main() {
             float xCoord = position.x/rightMostXCoord;
@@ -64,7 +64,7 @@
             vUv = uv;
             gl_Position = p;
             color = 0.0;
-            if(coloredStr[int(charIndex)] == 1){
+            if(coloredStr[int(alphabetIndex)] == 1){
               color = volume;
             }
             //      index = 20.0;
@@ -105,7 +105,7 @@
         uniform float timeDomain[512];
         uniform float volume;
         uniform int coloredStr[27];
-        attribute float charIndex;
+        attribute float alphabetIndex;
         varying float color;
       //  varying float index;
         attribute float strIndex;
@@ -143,10 +143,10 @@
           vUv = uv;
           gl_Position = p;
           color = 0.0;
-          if(coloredStr[int(charIndex)] == 1){
+          if(coloredStr[int(alphabetIndex)] == 1){
             color = volume;
           }
-          if(coloredStr[int(charIndex)] == 2){
+          if(coloredStr[int(alphabetIndex)] == 2){
             color = 1.0-volume;
           }
         }
@@ -195,7 +195,7 @@
         uniform float timeDomain[512];
         uniform float volume;
         uniform int coloredStr[27];
-        attribute float charIndex;
+        attribute float alphabetIndex;
         varying float color;
           //  varying float index;
         attribute float strIndex;
@@ -233,10 +233,10 @@
           vUv = uv;
           gl_Position = p;
           color = 0.0;
-          if(coloredStr[int(charIndex)] == 1){
+          if(coloredStr[int(alphabetIndex)] == 1){
             color = volume;
           }
-          if(coloredStr[int(charIndex)] == 2){
+          if(coloredStr[int(alphabetIndex)] == 2){
             color = 1.0-volume;
           }
         }

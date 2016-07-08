@@ -23,9 +23,9 @@ var soundmap = {
 // currently y o u is colored white (based on volume )
   var coloredStr = [0,
                     0,0,0,0,0, // abcde
-                    0,0,0,2,0, // fghij
-                    0,0,0,0,1, // klmno
+                    0,0,0,0,0, // fghij
+                    0,0,0,0,0, // klmno
                     0,0,0,0,0, // pqrst
-                    1,0,0,0,1,0]; //uvwxyz
+                    0,0,0,0,0,0]; //uvwxyz
 
 var pauseFlag = true; // false will disable the pause sample

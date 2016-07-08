@@ -113,6 +113,7 @@ Oscillator.prototype.stop = function( time){
 
 window.onload = function() {
     var DEBUG = false;
+    var enableSound = false;
     var  randomcolor = [ "#c0c0f0", "#f0c0c0", "#c0f0c0", "#f090f0", "#90f0f0", "#f0f090"],
        keyup_debug_color_index=0,
        keydown_debug_color_index=0,
@@ -243,13 +244,14 @@ window.onload = function() {
         name: 'Reverse Gate',
         url: soundmap.reverse_reverb
     };
-
+if(enableSound){
     WX.loadClip(clip2,function(){
         reverseGate.setClip(clip2);
     });
     WX.loadClip(clip1, function() {
         cverb.setClip(clip1);
     });
+  }
 
     var audioSelectVisual = document.querySelector('select#audioSource1');
     var audioSelectAudio = document.querySelector('select#audioSource2');
@@ -340,14 +342,15 @@ window.onload = function() {
     //  pitch_convolver.buffer = context.createBuffer(2, 2048, context.sampleRate);
 
     var buffers = {};
+    if (enableSound){
 
-    loadSounds(buffers, soundmap, function(){
-        pitch_convolver[0].buffer = buffers['june_C'];
-        reverb.buffer = buffers['ir1'];
-        reverb2.buffer = buffers['sus1'];
-        chatter.buffer = buffers['chatter'];
-
-    });
+      loadSounds(buffers, soundmap, function(){
+          pitch_convolver[0].buffer = buffers['june_C'];
+          reverb.buffer = buffers['ir1'];
+          reverb2.buffer = buffers['sus1'];
+          chatter.buffer = buffers['chatter'];
+      });
+    }
     var pauseStart = false;
     var amplitudeArray =  new Uint8Array(analyser.frequencyBinCount);
     var amplitudeArray2 =  new Uint8Array(analyser.frequencyBinCount);
@@ -385,6 +388,7 @@ window.onload = function() {
     var book;
     var geoindex = 0;
     var geo = {};
+    var pageStrIndex = [];
     var books = [];
     var currentPage = 0;
     var strPage = [];
@@ -399,6 +403,7 @@ window.onload = function() {
         geo[i] = [];
         geo[i][0] = new THREE.Geometry();
         strPage[i] = "";
+        pageStrIndex[i] = 0;
         // strPage[i] = "blocks of the streets becomes my poem.\ntrees of the road becomes my court\ndimmed lights reflecting in my eyes\npeople walking round in their disguise.\n\ni am feeling lonely in this zone.\ni feel the chill deep in my bones.\nthe crowd is isolating me.\nin paranoia i will be.\n\nthis gloomy streets are nursing me.\ndark alleys are my home to be.\nnocturnal fog becomes my air\nif i live or die.\nwould you care?";
         // var BOOK="Writing efficient WebGL code requires a certain mindset. The usual way to draw using WebGL is to set up your uniforms, buffers and shaders for each object, followed by a call to draw the object. This way of drawing works when drawing a small number of objects. To draw a large number of objects, you should minimize the amount of WebGL state changes. To start with, draw all objects using the same shader after each other, so that you don't have to change shaders between objects. For simple objects like particles, you could bundle several objects into a single buffer and edit it using JavaScript. That way you'd only have to reupload the vertex buffer instead of changing shader uniforms for every single particle.";
 
@@ -418,16 +423,22 @@ window.onload = function() {
     var offset = 1.0;
 //    var offset = 8.0;
     var attributes = {
-        strIndex: {type: 'f', value: [] },
-        charIndex:{type:'f', value: []}
+      pageIndex: {type: 'f', value: [] },
+      strIndex: {type: 'f', value: [] },
+      lineIndex: {type: 'f', value: [] },
+      chIndex: {type: 'f', value: [] },
+      alphabetIndex:{type:'f', value: []}
     };
+
+// keycode table is available here
+// https://css-tricks.com/snippets/javascript/javascript-keycodes/
+
 
     function addLetter(code, strIndex, sizeFactor){
         var alphabetIndex = String.fromCharCode(code).toLowerCase().charCodeAt(0) - 'a'.charCodeAt(0) + 1;
         console.log("code: " + String.fromCharCode(code)+ " alphabetIndex:" + alphabetIndex)
         if(alphabetIndex < 1 || alphabetIndex > 26 )
           alphabetIndex = 0;
-        console.log("code: " + String.fromCharCode(code)+ " alphabetIndex:" + alphabetIndex)
         var cx = code % lettersPerSide;
         var cy = Math.floor(code / lettersPerSide);
         //  var localscaleX = scaleX * (1+sizeFactor);
@@ -440,11 +451,9 @@ window.onload = function() {
             new THREE.Vector3( currIndex[currentPage]*scaleX, localY+localOffset, 0 )// left top
         );
         //   console.log("sizeFactor:" + sizeFactor + " added(" + (j*scaleX) + "," + (j*scaleX + offset) +" strIndex : " + strIndex + ")");
-        var vcenterX = currIndex[currentPage];
-        var vcenterY = (currentLine[currentPage]*scaleY*2.0+offset) / 2.0;
         for (var k=0; k<4;k++){
           attributes.strIndex.value[strIndex*4+k] = strIndex;// THREE.Vector2(6.0,12.0);
-          attributes.charIndex.value[strIndex*4+k] = alphabetIndex;// THREE.Vector2(6.0,12.0);
+          attributes.alphabetIndex.value[strIndex*4+k] = alphabetIndex;// THREE.Vector2(6.0,12.0);
         }
         var face = new THREE.Face3(strIndex*4+0, strIndex*4+1, strIndex*4+2);
         geo[currentPage][geoindex].faces.push(face);
@@ -475,6 +484,115 @@ window.onload = function() {
             }
         }
     } // the end of addLetter
+
+    var cmGrid = [];
+
+    var removeLetterCodeMirror = function(line,ch){
+      var object = cmGrid[line][ch];
+      var strIndex = object.index;
+
+      console.log("removing letter index(",line,",",ch,") : ", strIndex);
+      geo[currentPage][geoindex].vertices[strIndex*4].y = +50;
+      geo[currentPage][geoindex].vertices[strIndex*4+1].y = +50;
+      geo[currentPage][geoindex].vertices[strIndex*4+2].y = +50;
+      geo[currentPage][geoindex].vertices[strIndex*4+3].y = +50;
+    }
+
+    var shiftLetterVerticallyCodeMirror = function(object,line, shiftAmount){
+      var strIndex = object.index;
+      var sizeFactor = object.sizeFactor;
+      var localY = (1-line - shiftAmount)*scaleY - (sizeFactor/4.0);
+      var localOffset = offset * (1+sizeFactor*2.0);
+
+      geo[currentPage][geoindex].vertices[strIndex*4].y = localY;
+      geo[currentPage][geoindex].vertices[strIndex*4+1].y = localY;
+      geo[currentPage][geoindex].vertices[strIndex*4+2].y = localY+localOffset;
+      geo[currentPage][geoindex].vertices[strIndex*4+3].y = localY+localOffset;
+    }
+
+    var shiftLetterHorizontallyCodeMirror = function(object,from, shiftAmount){
+      var strIndex = object.index;
+      var sizeFactor = object.sizeFactor;
+      console.log("move the ", strIndex,"th letter ",shiftAmount," spaces.");
+      var localOffset = offset * (1+sizeFactor*2.0);
+      geo[currentPage][geoindex].vertices[strIndex*4].x = (from+shiftAmount) * scaleX;
+      geo[currentPage][geoindex].vertices[strIndex*4+1].x = (from+shiftAmount) * scaleX+localOffset;
+      geo[currentPage][geoindex].vertices[strIndex*4+2].x = (from+shiftAmount) * scaleX+localOffset;
+      geo[currentPage][geoindex].vertices[strIndex*4+3].x = (from+shiftAmount) * scaleX;
+    }
+/*
+    var shiftLettersHorizontallyCodeMirror = function(line,ch,shiftAmount){
+      for (var i=ch; i< cmGrid[line].length; i++){
+        var object = cmGrid[line][ch];
+        var strIndex = object.index;
+        var sizeFactor = object.sizeFactor;
+        console.log("move the ", strIndex,"th letter ",shiftAmount," spaces.");
+        var localOffset = offset * (1+sizeFactor*2.0);
+        geo[currentPage][geoindex].vertices[strIndex*4].x = (from+shiftAmount) * scaleX;
+        geo[currentPage][geoindex].vertices[strIndex*4+1].x = (from+shiftAmount) * scaleX+localOffset;
+        geo[currentPage][geoindex].vertices[strIndex*4+2].x = (from+shiftAmount) * scaleX+localOffset;
+        geo[currentPage][geoindex].vertices[strIndex*4+3].x = (from+shiftAmount) * scaleX;
+      }
+
+      for (var i=ch+shiftAmount; i< cmGrid[line].length; i++){
+
+      }
+
+    }
+*/
+    var addLetterCodeMirror = function (line, ch, sizeFactor, char){
+      var strIndex = pageStrIndex[currentPage];
+      pageStrIndex[currentPage]++;
+      cmGrid[line][ch] = {index:strIndex, sizeFactor:sizeFactor, char: char};
+
+      if(char.length!=1){
+        console.error("addLetterCodeMirror : no char added");
+        return;
+      }
+
+      var code = char.charCodeAt(0);
+      var alphabetIndex = String.fromCharCode(code).toLowerCase().charCodeAt(0) - 'a'.charCodeAt(0) + 1;
+      console.log("addLetterCodeMirror. (", line, ",", ch,")", " code: " + String.fromCharCode(code)+ " alphabetIndex:" + alphabetIndex)
+      if(alphabetIndex < 1 || alphabetIndex > 26 )
+        alphabetIndex = 0;
+      var cx = code % lettersPerSide;
+      var cy = Math.floor(code / lettersPerSide);
+      //  var localscaleX = scaleX * (1+sizeFactor);
+      var localOffset = offset * (1+sizeFactor*2.0);
+      var localY = (1-line)*scaleY - (sizeFactor/4.0);
+      geo[currentPage][geoindex].vertices.push(
+          new THREE.Vector3( ch*scaleX, localY, 0 ), // left bottom
+          new THREE.Vector3( ch*scaleX+localOffset, localY, 0 ), //right bottom
+          new THREE.Vector3( ch*scaleX+localOffset, localY+localOffset, 0 ),// right top
+          new THREE.Vector3( ch*scaleX, localY+localOffset, 0 )// left top
+      );
+
+      for (var k=0; k<4;k++){
+        attributes.pageIndex.value[strIndex*4+k] = currentPage;
+        attributes.strIndex.value[strIndex*4+k] = strIndex;// THREE.Vector2(6.0,12.0);
+        attributes.lineIndex.value[strIndex*4+k] = line;// THREE.Vector2(6.0,12.0);
+        attributes.chIndex.value[strIndex*4+k] = ch;// THREE.Vector2(6.0,12.0);
+        attributes.alphabetIndex.value[strIndex*4+k] = alphabetIndex;// THREE.Vector2(6.0,12.0);
+      }
+      var face = new THREE.Face3(strIndex*4+0, strIndex*4+1, strIndex*4+2);
+      geo[currentPage][geoindex].faces.push(face);
+      face = new THREE.Face3(strIndex*4+0, strIndex*4+2, strIndex*4+3);
+      geo[currentPage][geoindex].faces.push(face);
+      var ox=(cx)/lettersPerSide, oy=(cy+0.05)/lettersPerSide, off=0.9/lettersPerSide;
+    //  var sz = lettersPerSide*fontSize;
+      geo[currentPage][geoindex].faceVertexUvs[0].push([
+          new THREE.Vector2( ox, oy+off ),
+          new THREE.Vector2( ox+off, oy+off ),
+          new THREE.Vector2( ox+off, oy )
+      ]);
+      geo[currentPage][geoindex].faceVertexUvs[0].push([
+          new THREE.Vector2( ox, oy+off ),
+          new THREE.Vector2( ox+off, oy ),
+          new THREE.Vector2( ox, oy )
+      ]);
+
+
+    }
 
     var renderer = new THREE.WebGLRenderer({antialias: true});
     renderer.setClearColor( 0xffffff );
@@ -550,7 +668,6 @@ window.onload = function() {
         vertexShader : document.querySelector('#vertex0').textContent,
         fragmentShader : document.querySelector('#fragment0').textContent
     });
-
 
     shaderMaterial.transparent = true;
     shaderMaterial.depthTest = false;
@@ -696,8 +813,9 @@ window.onload = function() {
 
 
     window.onkeydown = function(ev){
+      return;
          var keycode = ev.which;
-        if (keycode == 8){
+        if (keycode == 8){// backspace
 
             // backspace is not supported for now. j
             ev.preventDefault();
@@ -729,7 +847,7 @@ window.onload = function() {
                 level_reverb.connect(compressor);
             }
         }
-        else if (keycode == 93){
+        else if (keycode == 93){ // right command key
             currentPage++;
             currentPage%=3;
             geoindex = 0;
@@ -790,6 +908,7 @@ window.onload = function() {
     };
 
     window.onkeyup = function(ev){
+
          var keycode = ev.which;
          if(DEBUG){
             $("#keyup_debug").html(keycode);
@@ -805,11 +924,8 @@ window.onload = function() {
     var currentOuput = 0.0; // noise burst output
 
     window.onkeypress = function(ev){
-
         var keycode = ev.which;
-
-
-
+        //  return;
         if(ev.ctrlKey == true){
           // turn on keycode
           var alphabetIndex = ev.code.charAt(3).toLowerCase().charCodeAt(0) - 'a'.charCodeAt(0) + 1;
@@ -872,7 +988,7 @@ window.onload = function() {
             pitch_convolver[pitch_convolver_id].buffer = buffers['june_A1'];
             return;
         }
-
+/*
         var prevgeoindex = geoindex;
         geoindex++;
         geoindex%=2;
@@ -888,7 +1004,7 @@ window.onload = function() {
             addLetter(code,strPage[currentPage].length-1,0);
         }
 
-
+*/
         var currentTime = context.currentTime;
 
         keyInterval += currentTime - previousKeyPressTime;
@@ -1049,24 +1165,24 @@ window.onload = function() {
      books[currentPage].geometry = geo[currentPage][geoindex];
      // let's play pause until
 
-if (!pauseFlag) return;
+     if (!pauseFlag) return;
 
      if(pause_handle){
        pause_handle.noteOff(1,0.1,0.5);
        pause.stop(context.currentTime + 3)
      }
 
-     pause = context.createBufferSource();
-     pause.loop = true;
-     pause_handle = new ADSR();
-     pause.connect(pause_handle.node);
-     pause_handle.node.connect(level_reverb);
-     pause.buffer = (keycode%2==0 ? buffers['pause1'] : buffers['pause2']);
-     //source.playbackRate.value = 1 + Math.random()*2;
-     pause.playbackRate.value = (1 + (keycode%97) / 200*4)*0.2 * (keycode%4+1) ;
-     pause.start(context.currentTime + 3);
-     //pause_handle.noteOn(1,7,7, 0.3, 0);
-     pause_handle.play(3,12, 3, 3, 3,1.0,0.1)
+      pause = context.createBufferSource();
+      pause.loop = true;
+      pause_handle = new ADSR();
+      pause.connect(pause_handle.node);
+      pause_handle.node.connect(level_reverb);
+      pause.buffer = (keycode%2==0 ? buffers['pause1'] : buffers['pause2']);
+      //source.playbackRate.value = 1 + Math.random()*2;
+      pause.playbackRate.value = (1 + (keycode%97) / 200*4)*0.2 * (keycode%4+1) ;
+      pause.start(context.currentTime + 3);
+      //pause_handle.noteOn(1,7,7, 0.3, 0);
+      pause_handle.play(3,12, 3, 3, 3,1.0,0.1)
     }
 
     var wheelHandler = function(ev) {
@@ -1142,6 +1258,252 @@ if (!pauseFlag) return;
 
         }
     };
+
+
+    var changeCodeMirrorFunc = function(instance, change){
+      if(DEBUG)console.log(change);
+      var startLine = change.from.line;
+      var startCh = change.from.ch;
+      var endLine = change.to.line;
+      var endCh = change.to.ch;
+      var sizeFactor = 0;
+      var added = change.text.join('\n').length>0
+      var removed = change.removed.join('\n').length>0
+
+      // create a new geometry
+      var prevgeoindex = geoindex;
+      geoindex++;
+      geoindex%=2;
+      geo[currentPage][geoindex] = geo[currentPage][prevgeoindex].clone();
+
+      // take care of removed first.
+      if(removed){
+        // if nothing is added, we need to move
+        // if anything is added, we do not need to move as next if block will set it in a correct position.
+        for (var j=startCh; j<startCh + change.removed[0].length; j++){
+          removeLetterCodeMirror(startLine,j);
+        }
+
+
+        for (var i=1; i< change.removed.length-1; i++){
+          for (var j=0; j<change.removed[i].length; j++){
+            removeLetterCodeMirror(startLine+i,j);
+          }
+        }
+
+        if (startLine != endLine){
+          for (var j=0; j<endCh; j++){
+            removeLetterCodeMirror(endLine,j);
+          }
+        }
+
+        // shift any leftover in the firstline
+        if (change.removed.length==1 ){// for the first line we need to shift any following letters.
+          if(endCh < cmGrid[startLine].length){
+            for (var i=endCh; i<cmGrid[endLine].length; i++){
+              shiftLetterHorizontallyCodeMirror(cmGrid[endLine][i],i,-change.removed[0].length);
+              cmGrid[endLine][i - change.removed[0].length] = cmGrid[endLine][i];
+            }
+          }
+          cmGrid[startLine].splice(cmGrid[startLine].length-(endCh-startCh),change.removed[0].length);
+        }
+
+        // shift the first line leftover after endLine
+        if (change.removed.length>1 ){// for the first line we need to concatenate them to the line
+          for (var i=endCh; i<cmGrid[endLine].length; i++){
+            shiftLetterHorizontallyCodeMirror(cmGrid[endLine][i],startCh,i-endCh);
+            shiftLetterVerticallyCodeMirror(cmGrid[endLine][i],startLine,0);
+            cmGrid[startLine][startCh+i-endCh] = cmGrid[endLine][i];
+          }
+          cmGrid[startLine].splice(startCh+(cmGrid[endLine].length-endCh),cmGrid[startLine].length - startCh+(cmGrid[endLine].length-endCh));
+
+
+          for (var i=endLine+1; i<cmGrid.length; i++){
+            for (var j=0; j<cmGrid[i].length; j++){
+              shiftLetterVerticallyCodeMirror(cmGrid[i][j],startLine,i-endLine);
+            }
+          }
+          cmGrid.splice(startLine+1,endLine-startLine);
+          if(cmGrid[startLine].length == 0)
+            cmGrid.splice(startLine, 1);
+        }
+
+      /*  if (change.removed.length==1 && cmGrid[startLine] && change.removed[0].length>0){// for the first line we need to shift any following letters.
+          if (endCh < cmGrid[startLine].length){
+            for (var i=endCh; i<cmGrid[endLine].length; i++){
+              shiftLetterHorizontallyCodeMirror(cmGrid[endLine][i].index,i,-change.removed[0].length, cmGrid[endLine][i].sizeFactor);
+              cmGrid[endLine][i - change.removed[0].length] = cmGrid[endLine][i];
+            }
+            cmGrid[startLine].splice(endCh,change.removed[0].length);
+          }else if (startCh > cmGrid[startLine].length){
+            console.error("ASSERT : startCh > cmGrid[startLine].length(",startCh ,">", cmGrid[startLine].length,")")
+          }else{
+            console.log("no shift needed");
+          }
+        }
+*/
+      }
+
+      if(added){
+        if(cmGrid[startLine]=== undefined){
+          cmGrid[startLine] = [];
+        }
+
+
+        if(change.text.length == 1){
+          // the first line first.
+          // visually move
+          for (var i=startCh; i<cmGrid[startLine].length; i++){
+            shiftLetterHorizontallyCodeMirror(cmGrid[startLine][i],i,change.text[0].length);
+          }
+          // update datastructure move
+          for (var i=0; i<change.text[0].length; i++){
+            cmGrid[startLine].splice(startCh,0,undefined);
+          }
+        }else{
+          // last line shifting
+          for (var i=startCh; i<cmGrid[startLine].length; i++){
+            shiftLetterVerticallyCodeMirror(cmGrid[startLine][i],startLine,change.text.length-1);
+            shiftLetterHorizontallyCodeMirror(cmGrid[startLine][i],change.text[change.text.length-1].length,i-startCh);
+          }
+          // following lines shifting
+          for (var i=startLine+1; i<cmGrid.length; i++){
+            for (var j=0; j<cmGrid[i].length; j++){
+              shiftLetterVerticallyCodeMirror(cmGrid[i][j],i,change.text.length-1);
+            }
+          }
+
+          for (var i=1; i<change.text.length; i++){
+            cmGrid.splice(startLine+1, 0, []);
+          }
+          var len = cmGrid[startLine].length;
+          // update the data structure;
+          for (var i=startCh; i<len; i++){
+            var object = cmGrid[startLine].pop();
+            cmGrid[startLine + change.text.length-1].splice(0,0,object);
+          }
+
+          // make a space for overwrite
+          for (var i=0; i<change.text[change.text.length-1].length; i++){
+            cmGrid[startLine + change.text.length-1].splice(0,0,undefined);
+          }
+
+        }
+
+        // add first line;
+        for (var j=0; j< change.text[0].length; j++){
+          addLetterCodeMirror(startLine, j+startCh, sizeFactor, change.text[0][j]);
+        }
+
+        // middle lines to the last lines
+        for (var i=1; i<change.text.length; i++){
+          for (var j=0; j<change.text[i].length; j++){
+            addLetterCodeMirror(startLine+i, j, sizeFactor, change.text[i][j]);
+          }
+        }
+
+// sanity check
+
+/*
+
+        for (var i=1; i< change.text.length-1; i++){
+          for (var j=0; j<change.text[i].length; j++){
+            addLetterCodeMirror(startLine+i, j, {index:pageStrIndex[currentPage], sizeFactor:sizeFactor}, change.text[i][j]);
+          }
+        }
+
+        if (startLine != endLine){
+          for (var j=0; j<endCh; j++){
+            removeLetterCodeMirror(cmGrid[endLine][j].index);
+          }
+        }
+        // shift any letter if needed:
+
+        if (change.text.length==1 && cmGrid[startLine] && change.text[0].length>0){// for the first line we need to shift any following letters.
+          if (startCh < cmGrid[startLine].length){
+            for (var i=startCh; i<cmGrid[startLine].length; i++){
+              shiftLetterHorizontallyCodeMirror(cmGrid[startLine][i],i,change.text[0].length);
+            }
+          }else if (startCh > cmGrid[startLine].length){
+            console.error("ASSERT : startCh > cmGrid[startLine].length(",startCh ,">", cmGrid[startLine].length,")")
+          }else{
+            console.log("no shift needed");
+          }
+        }
+        else if (change.text.length>1){
+          // there are multiple lines.
+          // shift the following lines
+          for(var i=startLine+1; i< cmGrid.length; i++){
+            for (var j=0; j< cmGrid[i].length; j++){
+              shiftLetterVerticallyCodeMirror(cmGrid[i][j],i,change.text.length-1);
+            }
+          }
+
+          if (startCh < cmGrid[startLine].length){
+            for (var i=startCh; i<cmGrid[startLine].length; i++){
+              shiftLetterVerticallyCodeMirror(cmGrid[startLine][i],startLine,change.text.length-1);
+              shiftLetterHorizontallyCodeMirror(cmGrid[startLine][i],i-startCh,change.text[change.text.length-1].length);
+            }
+          }else if (startCh > cmGrid[startLine].length){
+            console.error("ASSERT : startCh > cmGrid[startLine].length(",startCh ,">", cmGrid[startLine].length,")")
+          }else{
+            console.log("no shift needed");
+          }
+        }
+
+
+        for(var index=0; index< change.text.length; index++){
+          var line = change.text[index];
+          var ch=0;
+          if(index == 0){
+            ch = startCh;
+          }else{
+            cmGrid.splice(startLine,0,[]); // from the 2nd line , we need to push
+          }
+          for(var j=0; j< line.length; j++){
+            ch += j;
+
+            // maintain cmGrid before adding letter.
+
+            var sizeFactor = 0;
+            cmGrid[index+startLine].splice(ch,0,{index: pageStrIndex[currentPage], sizeFactor: sizeFactor});
+
+            addLetterCodeMirror(startLine + index, ch, {index:pageStrIndex[currentPage], sizeFactor:sizeFactor}, line[j]);
+            pageStrIndex[currentPage]++;
+          }
+
+        }*/
+      }//
+
+      if (instance.getDoc().lineCount() != cmGrid.length && !(instance.getDoc().lineCount()==1&&cmGrid.length==0)){
+
+        console.error("line does not match");
+        debugger;
+      }
+
+      if(!(instance.getDoc().lineCount()==1&&cmGrid.length==0)){
+        for (var i=0; i<instance.getDoc().lineCount(); i++){
+          if(instance.getDoc().getLine(i).length!= cmGrid[i].length){
+            console.error("line", i, "doesnot match");
+            debugger;
+          }
+          for (var j=0; j<instance.getDoc().getLine(i).length; j++){
+            if(instance.getDoc().getLine(i)[j]!= cmGrid[i][j].char){
+              console.error("character", i, "doesnot match");
+              debugger;
+            }
+          }
+        }
+      }
+
+
+      books[currentPage].geometry = geo[currentPage][geoindex];
+
+    };
+
+    editor.on("change", changeCodeMirrorFunc);
+    //editor.on("cursorActivity", cursorCodeMirrorFunc);
+    //editor.on("scroll", viewPortchangeCodeMirrorFunc);
 
 
 
