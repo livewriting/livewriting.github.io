@@ -833,7 +833,13 @@ if(enableSound){
     window.onkeydown = function(ev){
         if(enableCodeMirror)editor.focus();
         var keycode = ev.which;
-      if (keycode == 18){
+        if (keycode == 8){// backspace
+
+            // backspace is not supported for now. j
+            ev.preventDefault();
+          
+        }
+        else if (keycode == 18){
             filterOn = !filterOn;
             console.log("filteron:" + filterOn);
             if (filterOn){
