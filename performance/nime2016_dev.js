@@ -113,7 +113,7 @@ Oscillator.prototype.stop = function( time){
 
 window.onload = function() {
     var DEBUG = false;
-    var enableSound = false;
+    var enableSound = true;
     var  randomcolor = [ "#c0c0f0", "#f0c0c0", "#c0f0c0", "#f090f0", "#90f0f0", "#f0f090"],
        keyup_debug_color_index=0,
        keydown_debug_color_index=0,
