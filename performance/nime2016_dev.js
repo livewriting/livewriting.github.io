@@ -947,8 +947,13 @@ if(enableSound){
 
 
         // update the visual first.
+        if (enableCodeMirror){
+          var code = keycode;
+        }
+        else{
+          var code = strPage[currentPage].charCodeAt(strPage[currentPage].length-1);
+        }
 
-        var code = strPage[currentPage].charCodeAt(strPage[currentPage].length-1);
         if (code == 8) // //backspace
             return;
         if(keycode>=49 && keycode<=56){
