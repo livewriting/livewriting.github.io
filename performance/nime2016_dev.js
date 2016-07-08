@@ -813,7 +813,7 @@ if(enableSound){
 
 
     window.onkeydown = function(ev){
-      return;
+editor.focus();
          var keycode = ev.which;
         if (keycode == 8){// backspace
 
