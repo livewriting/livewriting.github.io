@@ -114,6 +114,7 @@ Oscillator.prototype.stop = function( time){
 window.onload = function() {
     var DEBUG = false;
     var enableSound = true;
+    var enableCodeMirror = false;
     var  randomcolor = [ "#c0c0f0", "#f0c0c0", "#c0f0c0", "#f090f0", "#90f0f0", "#f0f090"],
        keyup_debug_color_index=0,
        keydown_debug_color_index=0,
@@ -131,9 +132,10 @@ window.onload = function() {
       mode:"Plain Text",
       height:"100%"
     };
-
-    var editor = CodeMirror.fromTextArea(document.getElementById("livetext"),options);
-    editor.setSize("96%", "98%");
+    if(enableCodeMirror){
+      var editor = CodeMirror.fromTextArea(document.getElementById("livetext"),options);
+      editor.setSize("96%", "98%");
+    }
 
     $("#hide").click(function(){
         // remove select
@@ -813,8 +815,8 @@ if(enableSound){
 
 
     window.onkeydown = function(ev){
-editor.focus();
-         var keycode = ev.which;
+        if(enableCodeMirror)editor.focus();
+        var keycode = ev.which;
         if (keycode == 8){// backspace
 
             // backspace is not supported for now. j
@@ -988,23 +990,26 @@ editor.focus();
             pitch_convolver[pitch_convolver_id].buffer = buffers['june_A1'];
             return;
         }
-/*
-        var prevgeoindex = geoindex;
-        geoindex++;
-        geoindex%=2;
-        geo[currentPage][geoindex] = geo[currentPage][prevgeoindex].clone();
-        if ( currentPage == 2 && currentLine[2] <-7 && keycode >= 97 && keycode <=122)
-            keycode -= getRandomInt(0,1) * 32;
-        strPage[currentPage] +=String.fromCharCode(keycode);
-        if (lineindex[currentPage] <=8 && currentPage == 0)
-            volume = 0;
-        addLetter(strPage[currentPage].charCodeAt(strPage[currentPage].length-1),strPage[currentPage].length-1,volume);
-        if (currIndex[currentPage] == letterPerLine){
-            strPage[currentPage] += "\n";
-            addLetter(code,strPage[currentPage].length-1,0);
+
+        if(!enableCodeMirror){
+
+
+          var prevgeoindex = geoindex;
+          geoindex++;
+          geoindex%=2;
+          geo[currentPage][geoindex] = geo[currentPage][prevgeoindex].clone();
+          if ( currentPage == 2 && currentLine[2] <-7 && keycode >= 97 && keycode <=122)
+              keycode -= getRandomInt(0,1) * 32;
+          strPage[currentPage] +=String.fromCharCode(keycode);
+          if (lineindex[currentPage] <=8 && currentPage == 0)
+              volume = 0;
+          addLetter(strPage[currentPage].charCodeAt(strPage[currentPage].length-1),strPage[currentPage].length-1,volume);
+          if (currIndex[currentPage] == letterPerLine){
+              strPage[currentPage] += "\n";
+              addLetter(code,strPage[currentPage].length-1,0);
+          }
         }
 
-*/
         var currentTime = context.currentTime;
 
         keyInterval += currentTime - previousKeyPressTime;
@@ -1500,8 +1505,10 @@ editor.focus();
       books[currentPage].geometry = geo[currentPage][geoindex];
 
     };
+    if(enableCodeMirror){
+        editor.on("change", changeCodeMirrorFunc);
+    }
 
-    editor.on("change", changeCodeMirrorFunc);
     //editor.on("cursorActivity", cursorCodeMirrorFunc);
     //editor.on("scroll", viewPortchangeCodeMirrorFunc);
 
