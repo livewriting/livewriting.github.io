@@ -833,26 +833,7 @@ if(enableSound){
     window.onkeydown = function(ev){
         if(enableCodeMirror)editor.focus();
         var keycode = ev.which;
-        if (keycode == 8){// backspace
-
-            // backspace is not supported for now. j
-            ev.preventDefault();
-            geoindex++;
-            geoindex%=2;
-            geo[currentPage][geoindex] = geo[currentPage][geoindex].clone();
-            books[currentPage].geometry = geo[currentPage][geoindex];
-            if ( currIndex[currentPage] == 0 )
-            {
-                currentLine[currentPage] ++;
-                currIndex[currentPage] = prevJLastLine[currentPage];
-                strPage[currentPage] = strPage[currentPage].substring(0,strPage[currentPage].length-2);
-            }
-            else{
-               currIndex[currentPage]--;
-            }
-            strPage[currentPage] = strPage[currentPage].substring(0,strPage[currentPage].length-1);
-        }
-        else if (keycode == 18){
+      if (keycode == 18){
             filterOn = !filterOn;
             console.log("filteron:" + filterOn);
             if (filterOn){
@@ -923,7 +904,7 @@ if(enableSound){
             keydown_debug_color_index%=randomcolor.length;
             $("#keydown_debug").css("background-color", randomcolor[keydown_debug_color_index]);
         }
-          
+          // THIS IS OLD onkeypress part starting
         var keycode = ev.which;
         //  return;
         if(ev.ctrlKey == true){
@@ -951,8 +932,6 @@ if(enableSound){
           var code = strPage[currentPage].charCodeAt(strPage[currentPage].length-1);
         }
 
-        if (code == 8) // //backspace
-            return;
         if(keycode>=49 && keycode<=56){
           //(delay, R, sustainlevel)
           pitch_convolver_ADSR[pitch_convolver_id].noteOff(0,2,1);
