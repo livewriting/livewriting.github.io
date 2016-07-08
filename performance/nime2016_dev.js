@@ -874,7 +874,7 @@ if(enableSound){
                 interval = 1.0;
                 uniforms.time.value = 0;
                 //for (var i=0; i< numPage-1; i++)
-                books[1].material = shaderMaterial;
+        //        books[1].material = shaderMaterial;
             }
 
         }
@@ -1140,14 +1140,14 @@ if(enableSound){
                 var shaderMaterial = new THREE.ShaderMaterial({
                     uniforms : uniforms,
                     attributes : attributes,
-                    vertexShader : document.querySelector('#vertex2').textContent,
-                    fragmentShader : document.querySelector('#fragment2').textContent
+                    vertexShader : document.querySelector('#vertex0').textContent,
+                    fragmentShader : document.querySelector('#fragment1').textContent
                 });
                 shaderMaterial.transparent = true;
                 shaderMaterial.depthTest = false;
                 // turn on reverb gain slowly.
-                for (var i=0; i< numPage; i++)
-                    books[i].material = shaderMaterial;
+            //    for (var i=0; i< numPage; i++)
+              //      books[i].material = shaderMaterial;
 
            }
 
