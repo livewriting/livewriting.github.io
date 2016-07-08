@@ -1154,7 +1154,7 @@ if(enableSound){
 
         }
 
-     books[currentPage].geometry = geo[currentPage][geoindex];
+  //   books[currentPage].geometry = geo[currentPage][geoindex];
      // let's play pause until
 
      if (!pauseFlag) return;
