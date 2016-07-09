@@ -1280,6 +1280,11 @@ if(enableSound){
       var added = change.text.join('\n').length>0
       var removed = change.removed.join('\n').length>0
 
+      if (editor.getDoc().lineCount() <=8 && currentPage == 0)
+        volume = 0;
+      sizeFactor = volume;
+
+
       // create a new geometry
       var prevgeoindex = geoindex;
       geoindex++;
