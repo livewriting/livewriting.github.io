@@ -1119,8 +1119,8 @@ if(enableSound){
         }
 
         if (currentPage == 2){ // the third page
-            //var length = strPage[currentPage].length;
-            // var percent = WX.clamp(length/numCharPage[currentPage],0,1.0);
+            var length = editor.getDoc().getValue().length;
+            var percent = WX.clamp(length/numCharPage[currentPage],0,1.0);
             // slowly increase
             equalPowerCrossfade(0.5, chatter_filterGain, chatter_reverbGain, 0.5, 0.1);
             currentOuput = noiseBurst.get('output');
