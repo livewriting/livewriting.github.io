@@ -1078,17 +1078,20 @@ if(enableSound){
         // pitch_convolver.connect(compressor);
         //    gain.connect(context.destination);
 
-    /*    var randomPitch = 24 + getRandomInt(-3,12);
+        if(Math.random() > 0.95){
+          var randomPitch = 24 + getRandomInt(-3,12);
 
-        var osc = new Oscillator(randomPitch, 'triangle');
-        var adsr = new ADSR();
-        osc.node.connect(adsr.node);
-        adsr.node.connect(level_reverb);
+          var osc = new Oscillator(randomPitch, 'triangle');
+          var adsr = new ADSR();
+          osc.node.connect(adsr.node);
+          adsr.node.connect(level_reverb);
 
-        osc.play(0);
-        osc.stop(context.currentTime + 3.2);
-        adsr.play(0,0.1,0.1,2,1);
-*/
+          osc.play(0);
+          osc.stop(context.currentTime + 3.2);
+          adsr.play(0,0.1,0.1,2,1);
+        }
+
+
         var currentTime = (new Date()).getTime();
         if (lastKeyTime == 0)
             lastKeyTime = currentTime;

@@ -28,4 +28,4 @@ var soundmap = {
                     0,0,0,0,0, // pqrst
                     0,0,0,0,0,0]; //uvwxyz
 
-var pauseFlag = false; // false will disable the pause sample
+var pauseFlag = true; // false will disable the pause sample
