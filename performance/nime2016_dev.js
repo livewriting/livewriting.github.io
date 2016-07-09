@@ -112,7 +112,7 @@ Oscillator.prototype.stop = function( time){
 }
 
 window.onload = function() {
-    var DEBUG = true;
+    var DEBUG = false;
     var enableSound = true;
     var enableCodeMirror = true;
     var  randomcolor = [ "#c0c0f0", "#f0c0c0", "#c0f0c0", "#f090f0", "#90f0f0", "#f0f090"],
@@ -964,6 +964,9 @@ if(enableSound){
           pitch_convolver_ADSR[pitch_convolver_id].noteOn(0,1,0.1, 1, 1);
 
         }
+        if(keycode == 57){
+          DEBUG = !DEBUG;
+        }
         if (keycode == 49){ // 1 pressed
             pitch_convolver[pitch_convolver_id].buffer = buffers['june_A'];
             return;
@@ -1103,7 +1106,11 @@ if(enableSound){
             gain.gain.value = 0.1;
             source.buffer = buffers['tick1'];
             //source.playbackRate.value = 1 + Math.random()*2;
-            source.playbackRate.value = 1 + (keycode-65) / 60*4;
+            var freqNum = keycode;
+            if(ev.shiftKey){
+              freqNum-=32;
+            }
+            source.playbackRate.value = 1 + (freqNum-65) / 60*4;
             source.connect(reverseGate._inlet);
             source.start(0);
         }
@@ -1177,7 +1184,7 @@ if(enableSound){
       pause_handle.node.connect(level_reverb);
       pause.buffer = (keycode%2==0 ? buffers['pause1'] : buffers['pause2']);
       //source.playbackRate.value = 1 + Math.random()*2;
-      pause.playbackRate.value = (1 + (keycode%97) / 200*4)*0.2 * (keycode%4+1) ;
+      pause.playbackRate.value = (1 + (keycode%65) / 200*4)*0.2 * (keycode%4+1) ;
       pause.start(context.currentTime + 3);
       //pause_handle.noteOn(1,7,7, 0.3, 0);
       pause_handle.play(3,12, 3, 3, 3,1.0,0.1)
