@@ -21,11 +21,11 @@ var soundmap = {
   , 'reverse_reverb' : 'H3000-ReverseGate.mp3'};
 
 // currently y o u is colored white (based on volume )
-  var coloredStr = [0,
+var coloredStr = [0,
                     0,0,0,0,0, // abcde
                     0,0,0,0,0, // fghij
                     0,0,0,0,0, // klmno
                     0,0,0,0,0, // pqrst
                     0,0,0,0,0,0]; //uvwxyz
 
-var pauseFlag = true; // false will disable the pause sample
+var pauseFlag = false; // false will disable the pause sample

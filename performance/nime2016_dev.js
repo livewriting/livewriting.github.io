@@ -1077,7 +1077,7 @@ if(enableSound){
         //  gain.connect(level_reverb);
         // pitch_convolver.connect(compressor);
         //    gain.connect(context.destination);
-
+/*
         if(Math.random() > 0.95){
           var randomPitch = 24 + getRandomInt(-3,12);
 
@@ -1090,7 +1090,7 @@ if(enableSound){
           osc.stop(context.currentTime + 3.2);
           adsr.play(0,0.1,0.1,2,1);
         }
-
+*/
 
         var currentTime = (new Date()).getTime();
         if (lastKeyTime == 0)
@@ -1119,10 +1119,10 @@ if(enableSound){
         }
 
         if (currentPage == 2){ // the third page
-            var length = strPage[currentPage].length;
-            var percent = WX.clamp(length/numCharPage[currentPage],0,1.0);
+            //var length = strPage[currentPage].length;
+            // var percent = WX.clamp(length/numCharPage[currentPage],0,1.0);
             // slowly increase
-            equalPowerCrossfade(percent, chatter_filterGain, chatter_reverbGain, 0.5, 0.1);
+            equalPowerCrossfade(0.5, chatter_filterGain, chatter_reverbGain, 0.5, 0.1);
             currentOuput = noiseBurst.get('output');
             noiseBurst.params.output.set(currentOuput, context.currentTime, 1);
             currentOuput = percent * 0.1;
