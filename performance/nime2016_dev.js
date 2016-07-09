@@ -112,7 +112,7 @@ Oscillator.prototype.stop = function( time){
 }
 
 window.onload = function() {
-    var DEBUG = false;
+    var DEBUG = true;
     var enableSound = true;
     var enableCodeMirror = true;
     var  randomcolor = [ "#c0c0f0", "#f0c0c0", "#c0f0c0", "#f090f0", "#90f0f0", "#f0f090"],
@@ -847,12 +847,10 @@ if(enableSound){
         if(enableCodeMirror)editor.focus();
         var keycode = ev.which;
         if (keycode == 8){// backspace
-
             // backspace is not supported for now. j
             ev.preventDefault();
-
         }
-        else if (keycode == 18){
+        else if (keycode == 18){ // alt key
             filterOn = !filterOn;
             console.log("filteron:" + filterOn);
             if (filterOn){
@@ -910,7 +908,7 @@ if(enableSound){
                 uniforms.noise.value = 0.0;
             }, dur * 4000)
         }
-        else if(ev.shiftKey == true && keycode == 13){
+        else if(ev.shiftKey == true && keycode == 13){ // shift enter
             if ( currentPage == 2){
                 noiseBurstadsr.node.gain.linearRampToValueAtTime(1.0, context.currentTime );
                 noiseBurstadsr.node.gain.linearRampToValueAtTime(1.0, context.currentTime +8);
@@ -1023,7 +1021,7 @@ if(enableSound){
         keyIntervalCnt ++;
         previousKeyPressTime = currentTime;
         // play dron if interval is over threhold?
-        if ( keycode == 13 || keycode == 32 ){
+        if ( keycode == 13 || keycode == 32 ){ // space or enter
             var avgInterval = keyInterval/keyIntervalCnt;
                 // play drone sound
             console.log("space or enter : " + avgInterval + "(" + keyInterval + "," + keyIntervalCnt + ")");
@@ -1044,7 +1042,7 @@ if(enableSound){
             keyInterval = 0;
             keyIntervalCnt = 0;
         }
-        else if (keycode == 63){
+        else if (keycode == 191){
             state ++;
             if (state == 1){
 
@@ -1080,13 +1078,9 @@ if(enableSound){
         var randomPitch = 24 + getRandomInt(-3,12);
 
         var osc = new Oscillator(randomPitch, 'triangle');
-                var adsr = new ADSR();
-                osc.node.connect(adsr.node);
-                //          adsr.node.connect(level_reverb);
-                //   osc.adsr = adsr;
-               // oscillator_list[24] = osc;
-               //              }
-
+        var adsr = new ADSR();
+        osc.node.connect(adsr.node);
+        adsr.node.connect(level_reverb);
 
         osc.play(0);
         osc.stop(context.currentTime + 3.2);
@@ -1101,15 +1095,7 @@ if(enableSound){
         //interval = (currentTime - lastKeyTime);
         //  console.log(interval);
         lastKeyTime = currentTime;
-         if(DEBUG){
-            $("#keypress_debug").html(keycode);
-              //        $("#start_down_debug").html(pos[0]);
-              //        $("#end_down_debug").html(pos[1]);
 
-            keypress_debug_color_index++;
-            keypress_debug_color_index%=randomcolor.length;
-            $("#keypress_debug").css("background-color", randomcolor[keypress_debug_color_index]);
-        }
 
         if (state%2== 1){ // alternate by question mark.
             var source = context.createBufferSource();
@@ -1117,7 +1103,7 @@ if(enableSound){
             gain.gain.value = 0.1;
             source.buffer = buffers['tick1'];
             //source.playbackRate.value = 1 + Math.random()*2;
-            source.playbackRate.value = 1 + (keycode-97) / 60*4;
+            source.playbackRate.value = 1 + (keycode-65) / 60*4;
             source.connect(reverseGate._inlet);
             source.start(0);
         }
@@ -1134,7 +1120,7 @@ if(enableSound){
         }
 
         if (code == 10 || code == 13){ // enter or linebreak (carrige return)
-            lineindex[currentPage]++;
+            lineindex[currentPage] = editor.getDoc().lineCount();
 
             fbank.set('scale', scaleModel[getRandomInt(0,3)].value, WX.now + 4, 2);
            // fbank.set('pitch', fbank_pitchset[getRandomInt(0,3)]);
@@ -1174,7 +1160,7 @@ if(enableSound){
 
         }
 
-     books[currentPage].geometry = geo[currentPage][geoindex];
+     //books[currentPage].geometry = geo[currentPage][geoindex];
      // let's play pause until
 
      if (!pauseFlag) return;
@@ -1195,6 +1181,18 @@ if(enableSound){
       pause.start(context.currentTime + 3);
       //pause_handle.noteOn(1,7,7, 0.3, 0);
       pause_handle.play(3,12, 3, 3, 3,1.0,0.1)
+    }
+
+    window.onkeypress = function(ev){
+      var keycode = ev.which;
+      if(DEBUG){
+         $("#keypress_debug").html(keycode);
+           //        $("#start_down_debug").html(pos[0]);
+           //        $("#end_down_debug").html(pos[1]);
+         keypress_debug_color_index++;
+         keypress_debug_color_index%=randomcolor.length;
+         $("#keypress_debug").css("background-color", randomcolor[keypress_debug_color_index]);
+     }
     }
 
     var wheelHandler = function(ev) {
@@ -1274,6 +1272,8 @@ if(enableSound){
 
     var changeCodeMirrorFunc = function(instance, change){
       if(DEBUG)console.log(change);
+      if(change.origin=="setValue")
+        return;
       var startLine = change.from.line;
       var startCh = change.from.ch;
       var endLine = change.to.line;
