@@ -1078,7 +1078,7 @@ if(enableSound){
         // pitch_convolver.connect(compressor);
         //    gain.connect(context.destination);
 
-        var randomPitch = 24 + getRandomInt(-3,12);
+    /*    var randomPitch = 24 + getRandomInt(-3,12);
 
         var osc = new Oscillator(randomPitch, 'triangle');
         var adsr = new ADSR();
@@ -1088,7 +1088,7 @@ if(enableSound){
         osc.play(0);
         osc.stop(context.currentTime + 3.2);
         adsr.play(0,0.1,0.1,2,1);
-
+*/
         var currentTime = (new Date()).getTime();
         if (lastKeyTime == 0)
             lastKeyTime = currentTime;
