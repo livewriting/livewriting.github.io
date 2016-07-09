@@ -393,6 +393,7 @@ if(enableSound){
     var pageStrIndex = [];
     var books = [];
     var currentPage = 0;
+    var pageContent = [];
     var strPage = [];
     var lineindex = [];
 
@@ -690,7 +691,7 @@ if(enableSound){
     var r = w  * 1/Math.PI * 2;
     for (var i=0; i<numPage; i++) {
 
-
+        pageContent[i] = "";
 
         books[i] = new THREE.Mesh(
             geo[i][geoindex],
@@ -863,8 +864,15 @@ if(enableSound){
             }
         }
         else if (keycode == 93){ // right command key
-            currentPage++;
-            currentPage%=3;
+          pageContent[currentPage] = editor.getDoc().getValue();
+
+          currentPage++;
+          currentPage%=3;
+
+          editor.getDoc().setValue(pageContent[currentPage]);
+          editor.focus();
+          editor.execCommand("goDocEnd")
+
             geoindex = 0;
             if (currentPage == 2){
                 chatter.start(0);
