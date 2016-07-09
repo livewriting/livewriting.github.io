@@ -1122,7 +1122,7 @@ if(enableSound){
             var length = editor.getDoc().getValue().length;
             var percent = WX.clamp(length/numCharPage[currentPage],0,1.0);
             // slowly increase
-            equalPowerCrossfade(0.5, chatter_filterGain, chatter_reverbGain, 0.5, 0.1);
+            equalPowerCrossfade(percent, chatter_filterGain, chatter_reverbGain, 0.5, 0.1);
             currentOuput = noiseBurst.get('output');
             noiseBurst.params.output.set(currentOuput, context.currentTime, 1);
             currentOuput = percent * 0.1;
