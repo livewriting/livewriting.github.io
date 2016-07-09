@@ -235,7 +235,7 @@ window.onload = function() {
     fbank.set('pitch', 23);
 
     chatter.connect(analyser);
-    chatter.to(chatter_filterGain).connect(analyser);
+    chatter.to(chatter_filterGain).connect(level_original);
     chatter.to(chatter_reverbGain).connect(reverb);
 
     var clip1 = {
