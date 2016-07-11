@@ -112,7 +112,7 @@ Oscillator.prototype.stop = function( time){
 }
 
 window.onload = function() {
-    var DEBUG = false;
+    var DEBUG = true;
     var enableSound = true;
     var enableCodeMirror = true;
     var  randomcolor = [ "#c0c0f0", "#f0c0c0", "#c0f0c0", "#f090f0", "#90f0f0", "#f0f090"],
@@ -164,6 +164,11 @@ window.onload = function() {
     var reverb = context.createConvolver();
     var reverb2 = context.createConvolver();
     var chatter = context.createBufferSource();
+    var heartbeat = context.createBufferSource();
+    var ending = context.createBufferSource();
+    var heartbeatGainValue = 0;
+    var endingGainValue = 0;
+
     var pause_handle = null;
     var pause = null;
     var pauseADSR = new ADSR();
@@ -171,6 +176,8 @@ window.onload = function() {
 
 
     var chatter_filterGain = context.createGain();
+    var heartbeatGain = context.createGain();
+    var endingGain = context.createGain();
     var chatter_reverbGain = context.createGain();
     var sourceMic;
     var sourceBuiltInMic;
@@ -209,6 +216,8 @@ window.onload = function() {
 
     chatter_filterGain.gain.value = 1.0;
     chatter_reverbGain.gain.value = 0.0;
+    heartbeatGain.gain.value = 0.0;
+    endingGain.gain.value = 0.0;
 
     compressor.threshold.value = 10;
     compressor.ratio.value = 20;
@@ -233,6 +242,13 @@ window.onload = function() {
 
     fbank.set('scale', 'mixolydian');
     fbank.set('pitch', 23);
+
+    heartbeat.connect(heartbeatGain).connect(level_reverb);
+    heartbeatGain.connect(analyser);
+
+    ending.connect(endingGain).connect(level_reverb);
+    endingGain.connect(analyser);
+
 
     chatter.connect(analyser);
     chatter.to(chatter_filterGain).connect(analyser);
@@ -351,6 +367,8 @@ if(enableSound){
           reverb.buffer = buffers['ir1'];
           reverb2.buffer = buffers['sus1'];
           chatter.buffer = buffers['chatter'];
+          heartbeat.buffer = buffers['heartbeat'];
+          ending.buffer = buffers['nnote1'];
       });
     }
     var pauseStart = false;
@@ -359,8 +377,12 @@ if(enableSound){
     var amplitudeArray3 =  new Uint8Array(noiseBurstAnalyser.frequencyBinCount);
 
     // load the sound
-    if(DEBUG==true)
-      $( "body" ).append("<div><table><tr><td>name</td><td>keyDown</td><td>keyPress</td><td>keyUp</td><td>mouseUp</td></tr><tr><td>keycode</td><td><div id=\"keydown_debug\"></div></td><td><div id=\"keypress_debug\"></div></td><td><div id=\"keyup_debug\"></div></td><td><div id=\"mouseup_debug\"></div></td></tr><tr><td>start</td><td><div id=\"start_down_debug\"></div></td><td><div id=\"start_press_debug\"></div></td><td><div id=\"start_up_debug\"></div></td><td><div id=\"start_mouseup_debug\"></div></td></tr><tr><td>end</td><td><div id=\"end_down_debug\"></div></td><td><div id=\"end_press_debug\"></div></td><td><div id=\"end_up_debug\"></div></td><td><div id=\"end_mouseup_debug\"></div></td></tr></table></div>");
+    if(DEBUG==true){
+      $("#debug-panel").show();
+    }
+    else{
+      $("#debug-panel").hide();
+    }
 
 
     function getAverageVolume(array) {
@@ -506,7 +528,7 @@ if(enableSound){
     var shiftLetterVerticallyCodeMirror = function(object,line, shiftAmount){
       var strIndex = object.index;
       var sizeFactor = object.sizeFactor;
-      var localY = (1-line - shiftAmount)*scaleY - (sizeFactor/4.0);
+      var localY = (2-line - shiftAmount)*scaleY - (sizeFactor/4.0);
       var localOffset = offset * (1+sizeFactor*2.0);
 
       geo[currentPage][geoindex].vertices[strIndex*4].y = localY;
@@ -554,9 +576,23 @@ if(enableSound){
           rightMostXCoord = ch*scaleX+offset;
           rightMostPosition = ch;
       }
-      /*
-      rightMostXCoord = ch*scaleX+offset;// this creates an really interesting animations
-      */
+
+      if ( snapToggle ){
+          rightMostXCoord = ch*scaleX+offset;// this creates an really interesting animations
+          if ( line %3 == 0 && ch == 0){
+            var keycode = char.charCodeAt(0);
+            var source = context.createBufferSource();
+            var gain = context.createGain();
+            gain.gain.value = 0.1;
+            source.buffer = buffers['woodangtang'];
+            //source.playbackRate.value = 1 + Math.random()*2;
+            var freqNum = keycode;
+
+            source.playbackRate.value = 0.1 + (freqNum-65) / 60;
+            source.connect(level_original);
+            source.start(0);
+          }
+      }
 
       var strIndex = pageStrIndex[currentPage];
       pageStrIndex[currentPage]++;
@@ -576,7 +612,7 @@ if(enableSound){
       var cy = Math.floor(code / lettersPerSide);
       //  var localscaleX = scaleX * (1+sizeFactor);
       var localOffset = offset * (1+sizeFactor*2.0);
-      var localY = (1-line)*scaleY - (sizeFactor/4.0);
+      var localY = (2-line)*scaleY - (sizeFactor/4.0);
       geo[currentPage][geoindex].vertices.push(
           new THREE.Vector3( ch*scaleX, localY, 0 ), // left bottom
           new THREE.Vector3( ch*scaleX+localOffset, localY, 0 ), //right bottom
@@ -751,7 +787,9 @@ if(enableSound){
     });*/
     //  scene.add(geo);
 
-        var state = 0;
+    var state = 0;
+    var snapToggle = false;
+    var tdscale = 20.0;
 
     var currengPage1StartTime = 0;
     var animate = function(t) {
@@ -771,21 +809,20 @@ if(enableSound){
         volume = alpha * (resultArr[0]/128.0) + (1-alpha) * volume;
         uniforms.volume.value = volume;
         freqIndex = resultArr[1];
-        if(currentPage == 1){
+        if(currentPage == 1 && lineindex[currentPage] <=6 ){
             camera.rotation.y -= 0.00015;
             uniforms.time.value += 0.05;
             uniforms.interval.value = Math.max(Math.min(interval,1.0),0.0);
         }
-        else if ( currentPage == 2){
+        else if ( currentPage >= 1){
             camera.rotation.y -= 0.00005;
             uniforms.time.value -= 0.12;
-
         }
         alpha = 0.85;
         uniforms.rightMostXCoord.value = rightMostXCoord;
 
         for (var l=0;l<512;l++){
-            uniforms.timeDomain.value[l] = uniforms.timeDomain.value[l] * alpha + (1-alpha ) * (amplitudeArray2[l]/256.0-0.5);
+            uniforms.timeDomain.value[l] = uniforms.timeDomain.value[l] * alpha + (1-alpha ) * (amplitudeArray2[l]/256.0-0.5) * tdscale;
         }
         renderer.render(scene, camera);
         requestAnimationFrame(animate, renderer.domElement);
@@ -865,7 +902,6 @@ if(enableSound){
         }
         else if (keycode == 93){ // right command key
           pageContent[currentPage] = editor.getDoc().getValue();
-
           currentPage++;
           currentPage%=3;
 
@@ -878,6 +914,7 @@ if(enableSound){
                 chatter.start(0);
                 reverseGate.params.mix.set(0.0,context.currentTime,1);
                 reverseGate.params.mix.set(1.0,context.currentTime + 90,1);
+
             }
             else if (currentPage == 1){ // the 2nd page
               // the 2nd page shader
@@ -893,6 +930,12 @@ if(enableSound){
                 uniforms.time.value = 0;
                 //for (var i=0; i< numPage-1; i++)
                 books[1].material = shaderMaterial;
+                if(!heartbeat.loop){
+                  heartbeat.start(0);
+                  heartbeat.loop = true;
+                }
+
+
             }
 
         }
@@ -916,7 +959,7 @@ if(enableSound){
                 noiseBurstOn = true;
                 masterGain.gain.linearRampToValueAtTime(1.0,context.currentTime);
                 masterGain.gain.linearRampToValueAtTime(1.0,context.currentTime + 5);
-                masterGain.gain.linearRampToValueAtTime(0.0,context.currentTime + 8);
+                masterGain.gain.linearRampToValueAtTime(0.0,context.currentTime + 12);
             }
         }
           if(DEBUG){
@@ -933,12 +976,50 @@ if(enableSound){
         //  return;
         if(ev.ctrlKey == true){
           // turn on keycode
-          var alphabetIndex = ev.code.charAt(3).toLowerCase().charCodeAt(0) - 'a'.charCodeAt(0) + 1;
+          var alphabetIndex = ev.key.toLowerCase().charCodeAt(0) - 'a'.charCodeAt(0) + 1;
           if (alphabetIndex>=0 && alphabetIndex <=26){
             coloredStr[alphabetIndex]++;
             coloredStr[alphabetIndex]%=3;
             uniforms.coloredStr.value = coloredStr;
           }
+          else if(keycode == 189){
+            tdscale--;
+          }
+          else if(keycode == 187){
+            tdscale++;
+          }
+          else if (keycode == 49){ // 1 pressed
+              pitch_convolver[pitch_convolver_id].buffer = buffers['june_A'];
+              return;
+          } else if (keycode == 50){ // 2 pressed
+              pitch_convolver[pitch_convolver_id].buffer = buffers['june_B'];
+              return;
+          }
+          else if (keycode == 51){ // 3 pressed
+              pitch_convolver[pitch_convolver_id].buffer = buffers['june_C'];
+              return;
+          }
+          else if (keycode == 52){ // 4 pressed
+              pitch_convolver[pitch_convolver_id].buffer = buffers['june_D'];
+              return;
+          }
+          else if (keycode == 53){ // 5 pressed
+              pitch_convolver[pitch_convolver_id].buffer = buffers['june_E'];
+              return;
+          }
+          else if (keycode == 54){ // 6 pressed
+              pitch_convolver[pitch_convolver_id].buffer = buffers['june_F'];
+              return;
+          }
+          else if (keycode == 55){ // 7 pressed
+              pitch_convolver[pitch_convolver_id].buffer = buffers['june_G'];
+              return;
+          }
+          else if (keycode == 56){ // 8 pressed
+              pitch_convolver[pitch_convolver_id].buffer = buffers['june_A1'];
+              return;
+          }
+
           return;
         }
 
@@ -964,40 +1045,21 @@ if(enableSound){
           pitch_convolver_ADSR[pitch_convolver_id].noteOn(0,1,0.1, 1, 1);
 
         }
-        if(keycode == 57){
+
+        if(keycode == 57&&ev.metaKey){
           DEBUG = !DEBUG;
+          $("#debug-panel").toggle();
         }
-        if (keycode == 49){ // 1 pressed
-            pitch_convolver[pitch_convolver_id].buffer = buffers['june_A'];
-            return;
-        } else if (keycode == 50){ // 2 pressed
-            pitch_convolver[pitch_convolver_id].buffer = buffers['june_B'];
-            return;
+
+        if(keycode == 48&&ev.metaKey){
+          snapToggle = !snapToggle
+          rightMostXCoord = rightMostPosition*scaleX+offset;
         }
-        else if (keycode == 51){ // 3 pressed
-            pitch_convolver[pitch_convolver_id].buffer = buffers['june_C'];
-            return;
-        }
-        else if (keycode == 52){ // 4 pressed
-            pitch_convolver[pitch_convolver_id].buffer = buffers['june_D'];
-            return;
-        }
-        else if (keycode == 53){ // 5 pressed
-            pitch_convolver[pitch_convolver_id].buffer = buffers['june_E'];
-            return;
-        }
-        else if (keycode == 54){ // 6 pressed
-            pitch_convolver[pitch_convolver_id].buffer = buffers['june_F'];
-            return;
-        }
-        else if (keycode == 55){ // 7 pressed
-            pitch_convolver[pitch_convolver_id].buffer = buffers['june_G'];
-            return;
-        }
-        else if (keycode == 56){ // 8 pressed
-            pitch_convolver[pitch_convolver_id].buffer = buffers['june_A1'];
-            return;
-        }
+
+
+
+
+
 
         if(!enableCodeMirror){
 
@@ -1009,7 +1071,7 @@ if(enableSound){
           if ( currentPage == 2 && currentLine[2] <-7 && keycode >= 97 && keycode <=122)
               keycode -= getRandomInt(0,1) * 32;
           strPage[currentPage] +=String.fromCharCode(keycode);
-          if (lineindex[currentPage] <=8 && currentPage == 0)
+          if (lineindex[currentPage] <=11 && currentPage == 0)
               volume = 0;
           addLetter(strPage[currentPage].charCodeAt(strPage[currentPage].length-1),strPage[currentPage].length-1,volume);
           if (currIndex[currentPage] == letterPerLine){
@@ -1113,7 +1175,7 @@ if(enableSound){
             if(ev.shiftKey){
               freqNum-=32;
             }
-            source.playbackRate.value = 1 + (freqNum-65) / 60*4;
+            source.playbackRate.value = 0.2 + (freqNum-65) / 60*4;
             source.connect(reverseGate._inlet);
             source.start(0);
         }
@@ -1130,7 +1192,7 @@ if(enableSound){
         }
 
         if (code == 10 || code == 13){ // enter or linebreak (carrige return)
-            lineindex[currentPage] = editor.getDoc().lineCount();
+            lineindex[currentPage] = editor.getDoc().lineCount()-1;
 
             fbank.set('scale', scaleModel[getRandomInt(0,3)].value, WX.now + 4, 2);
            // fbank.set('pitch', fbank_pitchset[getRandomInt(0,3)]);
@@ -1152,7 +1214,7 @@ if(enableSound){
               osc.node.detune.linearRampToValueAtTime(900, context.currentTime + 120);
               osc.node.detune.linearRampToValueAtTime(200, context.currentTime + 240);
             }
-            else if (lineindex[currentPage] == 4 && currentPage == 0){ // thr fifth line the first page
+            else if (lineindex[currentPage] == 7&& currentPage == 0){ // thr fifth line the first page
                 var shaderMaterial = new THREE.ShaderMaterial({
                     uniforms : uniforms,
                     attributes : attributes,
@@ -1165,6 +1227,11 @@ if(enableSound){
                 for (var i=0; i< numPage; i++)
                     books[i].material = shaderMaterial;
 
+           }else if (lineindex[currentPage] == 7&& currentPage == 2){
+             if(!ending.loop){
+               ending.start(0);
+               ending.loop = true;
+             }
            }
 
 
@@ -1174,6 +1241,7 @@ if(enableSound){
      // let's play pause until
 
      if (!pauseFlag) return;
+     if (currentPage < 1) return;
 
      if(pause_handle){
        pause_handle.noteOff(1,0.1,0.5);
@@ -1185,7 +1253,12 @@ if(enableSound){
       pause_handle = new ADSR();
       pause.connect(pause_handle.node);
       pause_handle.node.connect(level_reverb);
-      pause.buffer = (keycode%2==0 ? buffers['pause1'] : buffers['pause2']);
+      var rn = Math.random();
+      if(rn < 0.5){
+        pause.buffer = buffers['pause1'];
+      }else {
+        pause.buffer = buffers['pause2'];
+      }
       //source.playbackRate.value = 1 + Math.random()*2;
       pause.playbackRate.value = (1 + (keycode%65) / 200*4)*0.2 * (keycode%4+1) ;
       pause.start(context.currentTime + 3);
@@ -1207,6 +1280,17 @@ if(enableSound){
 
     var wheelHandler = function(ev) {
         var ds = (ev.detail < 0 || ev.wheelDelta > 0) ? (1/1.01) : 1.01;
+        if (ev.detail < 0 || ev.wheelDelta > 0) {
+          heartbeatGainValue += 0.01;
+          if(ending.loop)  endingGainValue -= 0.002;
+        }else{
+          heartbeatGainValue -= 0.01;
+          if(ending.loop)  endingGainValue += 0.002;
+        }
+
+        heartbeatGain.gain.value = WX.clamp(heartbeatGainValue,0,1);
+        endingGain.gain.value = WX.clamp(endingGainValue,0,1);
+
         var fov = camera.fov * ds;
         fov = Math.min(120, Math.max(1, fov));
         camera.fov = fov;
@@ -1230,8 +1314,10 @@ if(enableSound){
             sx += dx;
             sy += dy;
             //hellow
-            if (drone  && currentPage >= 1)
-                drone.detune(dy);
+            if (drone  && currentPage >= 1){
+              drone.detune(dy);
+            }
+
 /*
             if (filterOn){
                 var minValue = 40;
@@ -1254,7 +1340,7 @@ if(enableSound){
             sy = ev.clientY;
        }
 //function ScissorVoice(noteNum, numOsc, oscType, detune){
-        if ( currentPage >= 1){
+        if ( currentPage >= 0){
             if (drone){
                 drone.output.noteOff(0,1,drone.maxGain*2.0);
                 drone.stop(context.currentTime + 1);
@@ -1292,7 +1378,7 @@ if(enableSound){
       var added = change.text.join('\n').length>0
       var removed = change.removed.join('\n').length>0
 
-      if (editor.getDoc().lineCount() <=8 && currentPage == 0)
+      if (editor.getDoc().lineCount() <=11 && currentPage == 0)
         volume = 0;
       sizeFactor = volume;
 
