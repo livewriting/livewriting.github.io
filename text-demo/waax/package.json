@@ -1,0 +1,28 @@
+{
+  "name": "WAAX",
+  "version": "1.0.0-alpha3",
+  "description": "Web Audio API extenstion. JavaScript web music framework built on top of Web Audio API and WebComponents/Polymer.",
+  "author": "Hongchan Choi <hongchan.choi@gmail.com>",
+  "devDependencies": {
+    "browser-sync": "~1.8.2",
+    "chai": "^1.10.0",
+    "del": "~1.1.1",
+    "gulp": "~3.8.10",
+    "gulp-concat": "~2.4.3",
+    "gulp-flatten": "~0.0.4",
+    "gulp-load-plugins": "~0.8.0",
+    "gulp-size": "~1.1.0",
+    "gulp-uglify": "~1.0.2",
+    "gulp-wrap": "0.11.0",
+    "mocha": "~2.1.0",
+    "run-sequence": "~1.0.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/hoch/WAAX.git"
+  },
+  "bugs": {
+    "url": "https://github.com/hoch/WAAX/issues"
+  },
+  "license": "MIT"
+}

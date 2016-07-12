@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+
+<head>
+<title>SP1 | WAAX Examples</title>
+  <script src="../../build/waax.min.js"></script>
+  <script src="../../build/mui/bower_components/webcomponentsjs/webcomponents.min.js"></script>
+  <link rel="import" href="../../build/mui/mui.html">
+  <link rel="stylesheet" href="../style.css">
+</head>
+
+<body unresolved>
+  <div class="wx-container">
+    <div class="wx-header">
+      <span class="wx-title">WAAX</span>
+      <span class="wx-info" id="wx-version"></span>
+      <span class="wx-menu">
+        <a href="..">Examples</a>
+      </span>
+    </div>
+
+    <h1>SP1</h1>
+    <mui-rack id="rack"></mui-rack>
+    <mui-rack label="Keyboard">
+      <mui-vkey id="vkey"></mui-vkey>
+    </mui-rack>
+
+  </div>
+  <script>
+
+    MUI.start(function () {
+
+      var sp1 = WX.SP1({ ampSustain: 1.0 });
+      sp1.to(WX.Master);
+
+      sp1.loadClip({
+        name: 'Guitar 120BPM CMaj',
+        url: '../../sound/loops/cgtr-120-cmaj.mp3'
+      });
+
+      MUI.buildControls(sp1, 'rack');
+      MUI.$('vkey').addTarget(sp1);
+
+    });
+  </script>
+  <script src="../examples.js"></script>
+</body>
+
+</html>
