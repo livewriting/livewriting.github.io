@@ -34,5 +34,25 @@
     </mui-rack>
     <textarea>
     </textarea>
+    <script>
+      MUI.start(function () {
+
+        var fmk1 = WX.FMK1({ output: 0.4 });
+        var delay = WX.StereoDelay({
+          mix: 0.25,
+          delayTimeLeft: 0.5,
+          delayTimeRight: 0.75,
+          feedbackLeft: 0.2,
+          feedbackRight: 0.4,
+          crosstalk: 0.25
+        });
+        fmk1.to(delay).to(WX.Master);
+
+        MUI.buildControls(fmk1, 'fmk1');
+        MUI.buildControls(delay, 'delay');
+        MUI.$('vkey').addTarget(fmk1);
+
+      });
+      </script>
   </body>
 </html>
