@@ -1,63 +1,196 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <title>Hello World</title>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <!-- Bootstrap -->
-    <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 
-    <!-- Optional theme -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+<!doctype html>
+<html>
 
-    <!-- Latest compiled and minified JavaScript -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
-    <script src="./waax/build/waax.min.js"></script>
-    <script src="./waax/build/mui/bower_components/webcomponentsjs/webcomponents.js"></script>
-    <link rel="import" href="./waax/build/mui/mui.html">
-  </head>
-  <body>
-    <div class = container>
-    <mui-rack id=“fmk1”></mui-rack>
-    <mui-rack id=“delay”></mui-rack>
-    <mui-rack label=“keyboard”>
-      <mui-vkey id=“vkey”></mui-vkey>
-    </mui-rack>
-    <textarea id = "helloworld" style = "width:100%;">
-    </textarea>
+<head>
+  <title>WAAX - Web Music Framework</title>
+  <meta name="keywords" content="Web Audio API, Web MIDI API, JavaScript, collaboration, creativity, sound synthesis, computer music, music productionm, Chrome, FireFox, Safari">
+  <meta name="description" content="Computer Music meets the Web. Experimental music software and collaborative creativity.">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- WAAX -->
+  <script src="waax/build/waax.min.js"></script>
+  <script src="waax/build/mui/bower_components/webcomponentsjs/webcomponents.js"></script>
+  <link rel="import" href="waax/build/mui/mui.html">
+  <!-- CSS -->
+  <link rel="stylesheet" href="css/wxdoc.min.css">
+  <link href='http://fonts.googleapis.com/css?family=Roboto:100,300,400,700|Roboto+Condensed:300,400,700' rel='stylesheet' type='text/css'>
+  <link href='http://fonts.googleapis.com/css?family=Source+Code+Pro:500' rel='stylesheet' type='text/css'>
+</head>
+
+<body unresolved class="wx-landing-body">
+<div class="docs-wrap">
+<div class="inner-wrap">
+
+  <nav class="top-bar sticky" data-topbar="">
+    <section class="left">
+      <div class="wx-navbar-title">
+        <h1><a href="#">WAAX</a> <small>v1.0.0-alpha3</small></h1>
+      </div>
+    </section>
+    <section class="top-bar-section">
+      <ul class="right">
+        <li class="divider"></li>
+        <li><a href="get-started/">Get Started</a></li>
+        <li class="divider"></li>
+        <li><a href="waax/examples">Examples</a></li>
+        <li class="divider"></li>
+        <li><a href="https://github.com/hoch/WAAX/">GitHub</a></li>
+      </ul>
+    </section>
+  </nav>
+  <!-- CONTENTS HERE -->
+
+  <div class="row wx-landing-title">
+    <div class="small-10 small-centered columns">
+      <h1 class="text-center">Build Music Apps. For Browsers.</h1>
+      <h2 class="text-center">Web Audio API eXtension</h2>
+    </div>
   </div>
-    <script>
-    $(function(){
-      MUI.start(function () {
 
-        var fmk1 = WX.FMK1({ output: 0.4 });
-        var delay = WX.StereoDelay({
-          mix: 0.25,
-          delayTimeLeft: 0.5,
-          delayTimeRight: 0.75,
-          feedbackLeft: 0.2,
-          feedbackRight: 0.4,
-          crosstalk: 0.25
-        });
-        fmk1.to(delay).to(WX.Master);
+  <div class="wx-landing-showroom">
+    <div class="row">
+      <div class="small-10 small-centered columns">
+        <!-- <img class="text-center" src="http://placehold.it/800x470"> -->
 
-        MUI.buildControls(fmk1, 'fmk1');
-        MUI.buildControls(delay, 'delay');
-        MUI.$('vkey').addTarget(fmk1);
+        <mui-rack id="fmk1"></mui-rack>
+        <mui-rack id="delay"></mui-rack>
+        <mui-rack label="keyboard" id="rack-key">
+          <mui-vkey id="vkey"></mui-vkey>
+        </mui-rack>
 
-      });
+      </div>
+    </div>
+  </div>
 
+  <div class="wx-landing-codesnippet">
+    <div class="row">
+      <div class="small-10 small-centered columns">
+        <div class="wx-headline-small">
+          With WAAX, this is how you create the live example above.
+        </div>
+        <div class="row">
+          <div class="medium-6 columns">
+            <div class="wx-codebox">
+              <pre>
+<code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-title">mui-rack</span> <span class="hljs-attribute">id</span>=<span class="hljs-value">“fmk1”</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-title">mui-rack</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-title">mui-rack</span> <span class="hljs-attribute">id</span>=<span class="hljs-value">“delay”</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-title">mui-rack</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-title">mui-rack</span> <span class="hljs-attribute">label</span>=<span class="hljs-value">“keyboard”</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-title">mui-vkey</span> <span class="hljs-attribute">id</span>=<span class="hljs-value">“vkey”</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-title">mui-vkey</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-title">mui-rack</span>&gt;</span></code>
+</pre>
+              <span class="wx-codebox-type">HTML</span>
+            </div>
+          </div>
+          <div class="medium-6 columns">
+            <div class="wx-codebox">
+              <pre>
+<code class="javascript hljs"><span class="hljs-keyword">var</span> fmk1 = WX.FMK1();
+<span class="hljs-keyword">var</span> delay = WX.StereoDelay();
+fmk1.to(delay).to(WX.Master);
+MUI.buildControls(fmk1, <span class="hljs-string">‘fmk1’</span>);
+MUI.buildControls(delay, <span class="hljs-string">‘delay’</span>);
+MUI.$(<span class="hljs-string">‘vkey’</span>).addTarget(fmk1);
+</code></pre>
+              <span class="wx-codebox-type">JS</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="wx-insertstrip">
+    <div class="row">
+      <div class="small-10 small-centered columns wx-headline">
+        <p>"<strong>Web Audio API eXtension</strong> is <br> a JavaScript framework  for web-based music application <br> built on top of <strong>Web Audio API</strong> and <strong>Web Components</strong>."</p>
+        <a href="get-started/" class="button radius">Get Started</a>
+        <a href="waax/examples" class="button radius">Examples</a>
+        <a href="reference/1.0.0-alpha3" class="button radius">API Reference</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="wx-highlights">
+    <div class="row">
+      <div class="small-10 small-centered columns">
+        <div class="row">
+          <div class="medium-6 columns">
+            <h2>Modular, Extensible and Robust.</h2>
+            <p>WAAX is comprised of 4 parts: Core, Plug-ins, MUI elements and Workflow. The flexibility serves various use cases such as prototyping, classroom setting, live coding or full-featured application design.</p>
+          </div>
+          <div class="medium-6 columns">
+            <h2>Create, Connect and Tweak.</h2>
+            <p>Synthesizer, sampler, chorus or equalizer - you can chain them to create your own sound. Furthermore, it is straight-forward to design your own plug-in based on WAPL(Web Audio PLugin) format.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="small-10 small-centered columns">
+        <div class="row">
+          <div class="medium-6 columns">
+            <h2>Musical UI for Web.</h2>
+            <p>With the power of Web Components, WAAX offers MUI, a set of musically-specialized GUI elements. You can create a knob with a single line of HTML code. Also MUI is smart enough to generate UI automatically.</p>
+          </div>
+          <div class="medium-6 columns">
+            <h2>Iterate and Experiment. Fast.</h2>
+            <p>WAAX values iteration and experiment. The pre-configured setup simplifies and optimizes the development process significantly. Bootstrap, iterate, build and deploy with few keystrokes.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="wx-bottom">
+    <div class="row">
+      <div class="small-10 small-centered columns">
+        <div class="wx-copyright">
+          <p>Copyright (c) 2011-2014 Hongchan Choi. All rights reserved.</p>
+          <dl class="sub-nav">
+            <dd><a href="about/">About</a></dd>
+            <dd><a href="http://webaudio.github.io/web-audio-api/">Web Audio API</a></dd>
+            <dd><a href="http://webaudio.github.io/web-midi-api/">Web MIDI API</a></dd>
+            <dd><a href="http://hoch.io/">Blog</a></dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- JOYRIDE -->
+<div id="wx-tooltip" class="wx-tooltip-item">
+  Type <span class="wx-kbd">Z</span> <span class="wx-kbd">C</span> <span class="wx-kbd">B</span> <span class="wx-kbd">Q</span> in order.
+</div>
+
+<!-- WAAX script -->
+<script>
+  MUI.start(function () {
+
+    var fmk1 = WX.FMK1({ output: 0.4 });
+    var delay = WX.StereoDelay({
+      mix: 0.25,
+      delayTimeLeft: 0.5,
+      delayTimeRight: 0.75,
+      feedbackLeft: 0.2,
+      feedbackRight: 0.4,
+      crosstalk: 0.25
     });
-      </script>
-  </body>
+    fmk1.to(delay).to(WX.Master);
+
+    MUI.buildControls(fmk1, 'fmk1');
+    MUI.buildControls(delay, 'delay');
+    MUI.$('vkey').addTarget(fmk1);
+
+  });
+</script>
+<script src="script/wxdoc.min.js"></script>
+
+<!-- AddThis
+<script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=YOUR-ADDTHIS-PUB-ID-HERE"></script>
+-->
+
+</body>
 </html>
