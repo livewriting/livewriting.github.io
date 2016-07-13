@@ -812,7 +812,7 @@ if(enableSound){
         volume = alpha * (resultArr[0]/128.0) + (1-alpha) * volume;
         uniforms.volume.value = volume;
         freqIndex = resultArr[1];
-        if(currentPage == 1 && lineindex[currentPage] <=6 ){
+        if(currentPage == 1 && lineindex[currentPage] <=8 ){
             camera.rotation.y -= 0.00015;
             uniforms.time.value += 0.05;
             uniforms.interval.value = Math.max(Math.min(interval,1.0),0.0);
