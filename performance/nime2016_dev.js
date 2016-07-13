@@ -923,7 +923,15 @@ if(enableSound){
                 chatter.start(0);
                 reverseGate.params.mix.set(0.0,context.currentTime,1);
                 reverseGate.params.mix.set(1.0,context.currentTime + 90,1);
-
+                //
+                var source = context.createBufferSource();
+                var gain = context.createGain();
+                gain.gain.value = 0.4;
+                source.buffer = buffers['tick1'];
+                //source.playbackRate.value = 1 + Math.random()*2;
+                source.playbackRate.value = 0.01;
+                source.connect(reverseGate._inlet);
+                source.start(0);
             }
             else if (currentPage == 1){ // the 2nd page
               // the 2nd page shader
