@@ -1277,7 +1277,7 @@ if(enableSound){
          $("#keypress_debug").css("background-color", randomcolor[keypress_debug_color_index]);
      }
     }
-
+    prevValue = 0;
     var wheelHandler = function(ev) {
         var ds = (ev.detail < 0 || ev.wheelDelta > 0) ? (1/1.01) : 1.01;
         if (ev.detail < 0 || ev.wheelDelta > 0) {
@@ -1287,7 +1287,7 @@ if(enableSound){
           heartbeatGainValue -= 0.01;
           if(ending.loop)  endingGainValue += 0.002;
         }
-        if (heartbeatGainValue <= 0){
+        if (heartbeatGainValue == 0){
           pause = context.createBufferSource();
           pause.connect(level_reverb);
           var rn = Math.random();
@@ -1300,7 +1300,7 @@ if(enableSound){
           pause.playbackRate.value = 0.5 + Math.random()  ;
           pause.start(0);
           //pause_handle.noteOn(1,7,7, 0.3, 0);
-          
+
         }
         heartbeatGain.gain.value = WX.clamp(heartbeatGainValue,0,1);
         endingGain.gain.value = WX.clamp(endingGainValue,0,1);
