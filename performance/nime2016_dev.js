@@ -888,7 +888,7 @@ if(enableSound){
             ev.preventDefault();
         }
         else if (keycode == 18){ // alt key
-            filterOn = !filterOn;
+          //  filterOn = !filterOn;
             console.log("filteron:" + filterOn);
             if (filterOn){
                 level_reverb.disconnect(0.001);
@@ -1332,7 +1332,7 @@ if(enableSound){
 */
         }
     };
-
+    var reached = false
     window.onmousedown = function (ev){
        if (ev.target == renderer.domElement) {
             down = true;
@@ -1340,7 +1340,8 @@ if(enableSound){
             sy = ev.clientY;
        }
 //function ScissorVoice(noteNum, numOsc, oscType, detune){
-        if ( currentPage >= 0){
+        if ( currentPage >= 1 || reached){
+          reached = true;
             if (drone){
                 drone.output.noteOff(0,1,drone.maxGain*2.0);
                 drone.stop(context.currentTime + 1);
