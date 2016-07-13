@@ -154,6 +154,8 @@ window.onload = function() {
                               navigator.msGetUserMedia);
     var level_original = context.createGain();
     var level_reverb = context.createGain();
+    var panNode = audioCtx.createStereoPanner();
+
     var pitch_convolver = [];
     var pitch_convolver_id = 0;
     var pitch_convolver_ADSR = [];
@@ -173,6 +175,7 @@ window.onload = function() {
     var pause = null;
     var pauseADSR = new ADSR();
     pauseADSR.node.connect(level_reverb);
+    panNode.connect(reverb);
 
 
     var chatter_filterGain = context.createGain();
@@ -1328,8 +1331,16 @@ if(enableSound){
             sx += dx;
             sy += dy;
             //hellow
-            if (drone  && currentPage >= 1){
+            if (drone && currentPage >= 1){
               drone.detune(dy);
+              if (panNode.pan.value <=1 && panNode.pan.value  >=-1){
+                if (dx > 0){
+                  panNode.pan.value += 0.01;
+                }
+                else if (dx < 0){
+                  panNode.pan.value -= 0.01;
+                }
+              }
             }
 
 /*
@@ -1362,7 +1373,9 @@ if(enableSound){
             }
            drone = new ScissorVoice(pitchListforDrone[pitchIndex],getRandomInt(3,10),"triangle", 12);
            //drone = new ScissorVoice(pitchListforDrone[pitchIndex],getRandomInt(3,10),"triangle", [3,5,7,12][getRandomInt(0,3)]);
-           drone.connect(reverb);
+           drone.connect(panNode);
+
+
            drone.output.noteOn(0,1,6000,drone.maxGain*2.0,drone.maxGain*2.0);
            pitchIndex++;
            pitchIndex %= pitchListforDrone.length;
