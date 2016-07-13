@@ -920,9 +920,6 @@ if(enableSound){
 
             geoindex = 0;
             if (currentPage == 2){
-                chatter.start(0);
-                reverseGate.params.mix.set(0.0,context.currentTime,1);
-                reverseGate.params.mix.set(1.0,context.currentTime + 90,1);
                 //
                 var source = context.createBufferSource();
                 var gain = context.createGain();
@@ -933,6 +930,11 @@ if(enableSound){
                 source.connect(gain);
                 gain.connect(compressor);
                 source.start(0);
+                
+                chatter.start(0);
+                reverseGate.params.mix.set(0.0,context.currentTime,1);
+                reverseGate.params.mix.set(1.0,context.currentTime + 90,1);
+
             }
             else if (currentPage == 1){ // the 2nd page
               // the 2nd page shader
