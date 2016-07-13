@@ -929,8 +929,9 @@ if(enableSound){
                 gain.gain.value = 0.4;
                 source.buffer = buffers['tick1'];
                 //source.playbackRate.value = 1 + Math.random()*2;
-                source.playbackRate.value = 0.01;
-                source.connect(compressor);
+                source.playbackRate.value = 0.3;
+                source.connect(gain);
+                gain.connect(compressor);
                 source.start(0);
             }
             else if (currentPage == 1){ // the 2nd page
@@ -1184,8 +1185,6 @@ if(enableSound){
 
         if (state%2== 1){ // alternate by question mark.
             var source = context.createBufferSource();
-            var gain = context.createGain();
-            gain.gain.value = 0.1;
             source.buffer = buffers['tick1'];
             //source.playbackRate.value = 1 + Math.random()*2;
             var freqNum = keycode;
