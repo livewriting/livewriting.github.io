@@ -1287,7 +1287,7 @@ if(enableSound){
           heartbeatGainValue -= 0.01;
           if(ending.loop)  endingGainValue += 0.002;
         }
-        if (heartbeatGainValue < = 0){
+        if (heartbeatGainValue <= 0){
           pause = context.createBufferSource();
           pause.loop = true;
           pause_handle = new ADSR();
