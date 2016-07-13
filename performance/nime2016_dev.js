@@ -1333,14 +1333,19 @@ if(enableSound){
             //hellow
             if (drone && currentPage >= 1){
               drone.detune(dy);
-              if (panNode.pan.value <=1 && panNode.pan.value  >=-1){
-                if (dx > 0){
-                  panNode.pan.value += 0.05;
-                }
-                else if (dx < 0){
-                  panNode.pan.value -= 0.05;
-                }
+              if (dx > 0){
+                panNode.pan.value += 0.05;
               }
+              else if (dx < 0){
+                panNode.pan.value -= 0.05;
+              }
+              if (panNode.pan.value >=1){
+                panNode.pan.value = 1;
+              }else if (panNode.pan.value <= -1)
+              {
+                panNote.pan.value = -1;
+              }
+
             }
 
 /*
