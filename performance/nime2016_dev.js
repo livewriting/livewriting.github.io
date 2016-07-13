@@ -1289,10 +1289,7 @@ if(enableSound){
         }
         if (heartbeatGainValue <= 0){
           pause = context.createBufferSource();
-          pause.loop = true;
-          pause_handle = new ADSR();
-          pause.connect(pause_handle.node);
-          pause_handle.node.connect(level_reverb);
+          pause.connect(level_reverb);
           var rn = Math.random();
           if(rn < 0.5){
             pause.buffer = buffers['pause1'];
@@ -1301,10 +1298,9 @@ if(enableSound){
           }
           //source.playbackRate.value = 1 + Math.random()*2;
           pause.playbackRate.value = 0.5 + Math.random()  ;
-          pause.start(context.currentTime + 3);
+          pause.start(0);
           //pause_handle.noteOn(1,7,7, 0.3, 0);
-          pause_handle.play(3,12, 3, 3, 3,1.0,0.1);
-
+          
         }
         heartbeatGain.gain.value = WX.clamp(heartbeatGainValue,0,1);
         endingGain.gain.value = WX.clamp(endingGainValue,0,1);
