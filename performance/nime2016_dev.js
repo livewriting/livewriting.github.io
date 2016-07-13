@@ -1335,10 +1335,10 @@ if(enableSound){
               drone.detune(dy);
               if (panNode.pan.value <=1 && panNode.pan.value  >=-1){
                 if (dx > 0){
-                  panNode.pan.value += 0.01;
+                  panNode.pan.value += 0.05;
                 }
                 else if (dx < 0){
-                  panNode.pan.value -= 0.01;
+                  panNode.pan.value -= 0.05;
                 }
               }
             }
@@ -1616,6 +1616,9 @@ if(enableSound){
         }*/
       }//
 
+      books[currentPage].geometry = geo[currentPage][geoindex];
+/*
+
       if (instance.getDoc().lineCount() != cmGrid[currentPage].length && !(instance.getDoc().lineCount()==1&&cmGrid[currentPage].length==0)){
 
         console.error("line does not match");
@@ -1637,8 +1640,7 @@ if(enableSound){
         }
       }
 
-
-      books[currentPage].geometry = geo[currentPage][geoindex];
+*/
 
     };
     if(enableCodeMirror){
