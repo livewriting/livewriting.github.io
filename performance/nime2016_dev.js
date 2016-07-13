@@ -930,7 +930,7 @@ if(enableSound){
                 source.buffer = buffers['tick1'];
                 //source.playbackRate.value = 1 + Math.random()*2;
                 source.playbackRate.value = 0.01;
-                source.connect(reverseGate._inlet);
+                source.connect(compressor);
                 source.start(0);
             }
             else if (currentPage == 1){ // the 2nd page
