@@ -930,7 +930,7 @@ if(enableSound){
                 source.connect(gain);
                 gain.connect(compressor);
                 source.start(0);
-                
+
                 chatter.start(0);
                 reverseGate.params.mix.set(0.0,context.currentTime,1);
                 reverseGate.params.mix.set(1.0,context.currentTime + 90,1);
@@ -1305,21 +1305,7 @@ if(enableSound){
           heartbeatGainValue -= 0.01;
           if(ending.loop)  endingGainValue += 0.002;
         }
-        if (heartbeatGainValue == 0){
-          pause = context.createBufferSource();
-          pause.connect(level_reverb);
-          var rn = Math.random();
-          if(rn < 0.5){
-            pause.buffer = buffers['pause1'];
-          }else {
-            pause.buffer = buffers['pause2'];
-          }
-          //source.playbackRate.value = 1 + Math.random()*2;
-          pause.playbackRate.value = 0.5 + Math.random()  ;
-          pause.start(0);
-          //pause_handle.noteOn(1,7,7, 0.3, 0);
-
-        }
+      
         heartbeatGain.gain.value = WX.clamp(heartbeatGainValue,0,1);
         endingGain.gain.value = WX.clamp(endingGainValue,0,1);
 
