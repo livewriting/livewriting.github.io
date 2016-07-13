@@ -154,7 +154,7 @@ window.onload = function() {
                               navigator.msGetUserMedia);
     var level_original = context.createGain();
     var level_reverb = context.createGain();
-    var panNode = audioCtx.createStereoPanner();
+    var panNode = context.createStereoPanner();
 
     var pitch_convolver = [];
     var pitch_convolver_id = 0;
