@@ -112,7 +112,7 @@ Oscillator.prototype.stop = function( time){
 }
 
 window.onload = function() {
-    var DEBUG = true;
+    var DEBUG = false;
     var enableSound = true;
     var enableCodeMirror = true;
     var  randomcolor = [ "#c0c0f0", "#f0c0c0", "#c0f0c0", "#f090f0", "#90f0f0", "#f0f090"],
@@ -1277,7 +1277,7 @@ if(enableSound){
          $("#keypress_debug").css("background-color", randomcolor[keypress_debug_color_index]);
      }
     }
-    prevValue = 0;
+
     var wheelHandler = function(ev) {
         var ds = (ev.detail < 0 || ev.wheelDelta > 0) ? (1/1.01) : 1.01;
         if (ev.detail < 0 || ev.wheelDelta > 0) {
