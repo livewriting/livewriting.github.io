@@ -827,7 +827,13 @@ if(enableSound){
         for (var l=0;l<512;l++){
             uniforms.timeDomain.value[l] = uniforms.timeDomain.value[l] * alpha + (1-alpha ) * (amplitudeArray2[l]/256.0-0.5) * tdscale;
         }
-        renderer.render(scene, camera);
+        try {
+          renderer.render(scene, camera);
+        }
+        catch(err){
+          console.error("renderer errorrorro ");
+        }
+
         requestAnimationFrame(animate, renderer.domElement);
     };// the end of animate()
 
@@ -1379,7 +1385,7 @@ if(enableSound){
            drone = new ScissorVoice(pitchListforDrone[pitchIndex],getRandomInt(3,10),"triangle", 12);
            //drone = new ScissorVoice(pitchListforDrone[pitchIndex],getRandomInt(3,10),"triangle", [3,5,7,12][getRandomInt(0,3)]);
            drone.connect(panNode);
-
+           panNode.pan.value = 0;
 
            drone.output.noteOn(0,1,6000,drone.maxGain*2.0,drone.maxGain*2.0);
            pitchIndex++;
