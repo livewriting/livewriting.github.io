@@ -909,7 +909,7 @@ if(enableSound){
                 level_reverb.connect(compressor);
             }
         }
-        else if (keycode == 93){ // right command key
+        else if (keycode == 93 || keycode == 92){ // right command key
           pageContent[currentPage] = editor.getDoc().getValue();
           currentPage++;
           currentPage%=3;
@@ -997,7 +997,7 @@ if(enableSound){
         if(ev.ctrlKey == true){
           // turn on keycode
           var alphabetIndex = ev.key.toLowerCase().charCodeAt(0) - 'a'.charCodeAt(0) + 1;
-          if (alphabetIndex>=0 && alphabetIndex <=26){
+          if (currentPage >= 1 && alphabetIndex>=0 && alphabetIndex <=26){
             coloredStr[alphabetIndex]++;
             coloredStr[alphabetIndex]%=3;
             uniforms.coloredStr.value = coloredStr;
@@ -1305,7 +1305,7 @@ if(enableSound){
           heartbeatGainValue -= 0.01;
           if(ending.loop)  endingGainValue += 0.002;
         }
-      
+
         heartbeatGain.gain.value = WX.clamp(heartbeatGainValue,0,1);
         endingGain.gain.value = WX.clamp(endingGainValue,0,1);
 
@@ -1344,7 +1344,7 @@ if(enableSound){
                 panNode.pan.value = 1;
               }else if (panNode.pan.value <= -1)
               {
-                panNote.pan.value = -1;
+                panNode.pan.value = -1;
               }
 
             }
@@ -1377,12 +1377,12 @@ if(enableSound){
                 drone.output.noteOff(0,1,drone.maxGain*2.0);
                 drone.stop(context.currentTime + 1);
             }
-           drone = new ScissorVoice(pitchListforDrone[pitchIndex],getRandomInt(3,10),"triangle", 12);
+           drone = new ScissorVoice(pitchListforDrone[pitchIndex]+12,getRandomInt(7,10),"triangle", 12);
            //drone = new ScissorVoice(pitchListforDrone[pitchIndex],getRandomInt(3,10),"triangle", [3,5,7,12][getRandomInt(0,3)]);
            drone.connect(panNode);
            panNode.pan.value = 0;
 
-           drone.output.noteOn(0,1,6000,drone.maxGain*2.0,drone.maxGain*2.0);
+           drone.output.noteOn(0,1,6000,drone.maxGain*5.0,drone.maxGain*5.0);
            pitchIndex++;
            pitchIndex %= pitchListforDrone.length;
         }
