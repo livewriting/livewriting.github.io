@@ -1091,7 +1091,7 @@ if(enableSound){
           if ( currentPage == 2 && currentLine[2] <-7 && keycode >= 97 && keycode <=122)
               keycode -= getRandomInt(0,1) * 32;
           strPage[currentPage] +=String.fromCharCode(keycode);
-          if (lineindex[currentPage] <=11 && currentPage == 0)
+          if (lineindex[currentPage] <=8 && currentPage == 0)
               volume = 0;
           addLetter(strPage[currentPage].charCodeAt(strPage[currentPage].length-1),strPage[currentPage].length-1,volume);
           if (currIndex[currentPage] == letterPerLine){
@@ -1232,7 +1232,7 @@ if(enableSound){
               osc.node.detune.linearRampToValueAtTime(900, context.currentTime + 120);
               osc.node.detune.linearRampToValueAtTime(200, context.currentTime + 240);
             }
-            else if (lineindex[currentPage] == 7&& currentPage == 0){ // thr fifth line the first page
+            else if (lineindex[currentPage] == 2 && currentPage == 0){ // thr fifth line the first page
                 var shaderMaterial = new THREE.ShaderMaterial({
                     uniforms : uniforms,
                     attributes : attributes,
@@ -1412,7 +1412,7 @@ if(enableSound){
       var added = change.text.join('\n').length>0
       var removed = change.removed.join('\n').length>0
 
-      if (editor.getDoc().lineCount() <=11 && currentPage == 0)
+      if (editor.getDoc().lineCount() <=8 && currentPage == 0)
         volume = 0;
       sizeFactor = volume;
 
