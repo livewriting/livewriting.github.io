@@ -1232,7 +1232,7 @@ if(enableSound){
               osc.node.detune.linearRampToValueAtTime(900, context.currentTime + 120);
               osc.node.detune.linearRampToValueAtTime(200, context.currentTime + 240);
             }
-            else if (lineindex[currentPage] == 2 && currentPage == 0){ // thr fifth line the first page
+            else if (lineindex[currentPage] == 4 && currentPage == 0){ // thr fifth line the first page
                 var shaderMaterial = new THREE.ShaderMaterial({
                     uniforms : uniforms,
                     attributes : attributes,
