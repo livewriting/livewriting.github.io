@@ -896,7 +896,7 @@ if(enableSound){
             // backspace is not supported for now. j
             ev.preventDefault();
         }
-        else if (keycode == 18){ // alt key
+       /* else if (keycode == 18){ // alt key
           //  filterOn = !filterOn;
             console.log("filteron:" + filterOn);
             if (filterOn){
@@ -908,7 +908,7 @@ if(enableSound){
                 level_reverb.disconnect(0.001);
                 level_reverb.connect(compressor);
             }
-        }
+        }*/
         else if (keycode == 93 || keycode == 18 || keycode == 92){ // right command key
           pageContent[currentPage] = editor.getDoc().getValue();
           currentPage++;
