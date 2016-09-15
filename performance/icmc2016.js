@@ -909,7 +909,7 @@ if(enableSound){
                 level_reverb.connect(compressor);
             }
         }
-        else if (keycode == 93 || keycode == 91 || keycode == 92){ // right command key
+        else if (keycode == 93 || keycode == 18 || keycode == 92){ // right command key
           pageContent[currentPage] = editor.getDoc().getValue();
           currentPage++;
           currentPage%=numPage;
