@@ -792,7 +792,7 @@ if(enableSound){
 
     var state = 0;
     var snapToggle = false;
-    var tdscale = 20.0;
+    var tdscale = 5.0;
 
     var currengPage1StartTime = 0;
     var animate = function(t) {
