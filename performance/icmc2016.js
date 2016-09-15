@@ -1318,7 +1318,7 @@ if(enableSound){
     window.addEventListener('DOMMouseScroll', wheelHandler, false);
     window.addEventListener('mousewheel', wheelHandler, false);
     var drone;
-    var pitchListforDrone = [15,17,22,10];
+    var pitchListforDrone = [15,17,22,10,12,24,16,17];
     var pitchIndex=0;
     window.onmousemove = function(ev) {
         if (down) {
@@ -1381,9 +1381,10 @@ if(enableSound){
            //drone = new ScissorVoice(pitchListforDrone[pitchIndex],getRandomInt(3,10),"triangle", [3,5,7,12][getRandomInt(0,3)]);
            drone.connect(panNode);
            panNode.pan.value = 0;
+           drone.detune(getRandomInt(0,100));
 
            drone.output.noteOn(0,1,6000,drone.maxGain*5.0,drone.maxGain*5.0);
-           pitchIndex++;
+           pitchIndex+=getRandomInt(0,5);
            pitchIndex %= pitchListforDrone.length;
         }
     };
