@@ -1332,7 +1332,7 @@ if(enableSound){
             sx += dx;
             sy += dy;
             //hellow
-            if (drone && currentPage >= 1){
+            if (drone){
               drone.detune(dy);
               if (dx > 0){
                 panNode.pan.value += 0.05;
