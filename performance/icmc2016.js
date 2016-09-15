@@ -1318,7 +1318,7 @@ if(enableSound){
     window.addEventListener('DOMMouseScroll', wheelHandler, false);
     window.addEventListener('mousewheel', wheelHandler, false);
     var drone;
-    var pitchListforDrone = [15,17,22,10,12,24,16,17];
+    var pitchListforDrone = [15,17,22,21,16,10];
     var pitchIndex=0;
     window.onmousemove = function(ev) {
         if (down) {
@@ -1384,7 +1384,7 @@ if(enableSound){
            drone.detune(getRandomInt(0,100));
 
            drone.output.noteOn(0,1,6000,drone.maxGain*5.0,drone.maxGain*5.0);
-           pitchIndex+=getRandomInt(0,5);
+           pitchIndex+=getRandomInt(0,1);
            pitchIndex %= pitchListforDrone.length;
         }
     };
