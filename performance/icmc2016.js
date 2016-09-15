@@ -810,7 +810,7 @@ if(enableSound){
 
         var resultArr = getAverageVolume(amplitudeArray);
         volume = alpha * (resultArr[0]/128.0) + (1-alpha) * volume;
-        uniforms.volume.value = volume;
+        uniforms.volume.value = volume/1.5;
         freqIndex = resultArr[1];
         if(currentPage == 1 && lineindex[currentPage] <=8 ){
             camera.rotation.y -= 0.00015;
