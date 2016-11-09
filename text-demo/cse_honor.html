@@ -1,0 +1,74 @@
+
+<html>
+  <head>
+    <title>Example 4 : Temporal Typography</title>
+    <link rel="stylesheet" type="text/css" href="./main.css"/>
+<script id="vertex" type="text/x-glsl-vert">
+    //    uniform float freqBin[80];
+        uniform float time;
+      uniform float volume;
+      varying float volume2;
+        attribute float attCenter;
+        attribute float attCenterx;
+      varying vec2 vUv;
+   // varying float color ;
+      void main() {
+        vec4 fpos = vec4( position, 1.0 );
+     //   fpos.z += volume*5.0 ;//+ time;
+     volume2 = volume;
+        int x = int(fpos.x);
+      //  fpos.y = attCenter + (fpos.y - attCenter) * (0.9+freqBin[x]/256.0);
+       fpos.y = attCenter + (fpos.y - attCenter) * (0.9+volume*2.0);
+       fpos.x = attCenterx + (fpos.x - attCenterx) * (0.9+volume);
+        vec4 mvPosition = modelViewMatrix * fpos;
+        vec4 p = projectionMatrix * mvPosition;
+        vUv = uv;
+       // color = (attCenter );
+        gl_Position = p;
+      }
+    </script>
+      <script id="fragment" type="text/x-glsl-frag">
+      varying vec2 vUv;
+      varying float color;
+        varying float volume2;
+        uniform float avg_index;
+
+      uniform sampler2D map;
+      void main() {
+        vec2 uv = vUv;
+        uv.y = uv.y + sin(uv.x *avg_index * 1000.0)*0.01* volume2 ;//+ sin(uv.x * 2000.0)*0.001 * volume2;
+        uv.x = uv.x + cos(tan(uv.y) *avg_index * 1000.0)*0.005* volume2 ;//+ sin(uv.x * 2000.0)*0.001 * volume2;
+        vec4 diffuse = texture2D(map, uv);
+        //gl_FragColor = mix(diffuse, vec4(1.0,0,0,1), 0.5);
+        gl_FragColor = diffuse;
+     //   gl_FragColor = vec4(1.0,0,0,1);
+     //   gl_FragColor = vec4(color,0,0,1);
+
+      }
+    </script>
+    <script src="./waax.min.js"></script>
+    <script src="./mui/bower_components/webcomponentsjs/webcomponents.min.js"></script>
+
+    <script src="Three.js"></script>
+    <script src="dat.gui.min.js"></script>
+    <script src="nfme.js"></script>
+    <script src="cse_honor.js"></script>
+
+
+    <style>
+      html {
+        background-color: #fff;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+  </head>
+  <body>
+
+
+
+  </body>
+</html>
