@@ -299,14 +299,12 @@ window.onload = function() {
     audioSelectAudio.onchange = getSourceID;
     audioSelectAudio.sourceType = "audio";
 //https://simpl.info/getusermedia/sources/
-    function gotSources(sourceInfos) {
-      for (var i = 0; i !== sourceInfos.length; ++i) {
-        var sourceInfo = sourceInfos[i];
+    function gotSource(sourceInfo) {
         var option1 = document.createElement('option');
         var option2 = document.createElement('option');
         option1.value = sourceInfo.id;
         option2.value = sourceInfo.id;
-        if (sourceInfo.kind === 'audio') {
+        if (sourceInfo.kind === 'audioinput') {
           option1.text = sourceInfo.label || 'microphone ' + (audioSelectVisual.length);
           option2.text = sourceInfo.label || 'microphone ' + (audioSelectVisual.length);
         audioSelectVisual.appendChild(option1);
@@ -314,16 +312,16 @@ window.onload = function() {
         } else {
           console.log('Some other kind of source: ', sourceInfo);
         }
-      }
     }
     // end of     function gotSources(sourceInfos)
+    navigator.mediaDevices.enumerateDevices()
+    .then(function(devices) {
+      devices.forEach(gotSource);
+    })
+    .catch(function(err) {
+      console.log(err.name + ": " + err.message);
+    });
 
-    if (typeof MediaStreamTrack === 'undefined' ||
-        typeof MediaStreamTrack.getSources === 'undefined') {
-      alert('This browser does not support MediaStreamTrack.\n\nTry Chrome.');
-    } else {
-      MediaStreamTrack.getSources(gotSources);
-    }
 
     //  pitch_convolver.buffer = context.createBuffer(2, 2048, context.sampleRate);
 
