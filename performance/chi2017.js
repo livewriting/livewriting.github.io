@@ -184,7 +184,9 @@ window.onload = function() {
 
     // set up forked web audio context, for multiple browsers
     // window. is needed otherwise Safari explodes
-
+    var tickState = 0;
+    var droneState = true;
+    
     var volume = 0;
     var freqIndex;
 
@@ -841,8 +843,6 @@ if(enableSound){
     });*/
     //  scene.add(geo);
 
-    var tickState = 0;
-    var droneState = false;
     var snapToggle = false;
     var tdscale = 5.0;
 
