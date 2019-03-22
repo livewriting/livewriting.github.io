@@ -157,7 +157,8 @@ var DEBUG = false;
         document.body.appendChild(renderer.domElement);
        // FIME (Text vIsualization for Musical Expression
       //  var BOOK="Hello, NIME.";//. This is fft spectrum testing. Make sure you allow to use the microphone. Sing some notes. The frequency of the note will change the height of the text.";
-         var BOOK="This is sine-wave convoluted text.\nMake sure you \"Allow\" for\nmicrophone permissions in your web browser.";
+      //   var BOOK="This is sine-wave convoluted text.\nMake sure you \"Allow\" for\nmicrophone permissions in your web browser.";
+        var BOOK="Welcome to Virginia Tech! I hope to see you this fall. \nWelcome to Virginia Tech! I hope to see you this fall. \nWelcome to Virginia Tech! I hope to see you this fall. \nWelcome to Virginia Tech! I hope to see you this fall. \nWelcome to Virginia Tech! I hope to see you this fall. \nWelcome to Virginia Tech! I hope to see you this fall. \nWelcome to Virginia Tech! I hope to see you this fall. \nWelcome to Virginia Tech! I hope to see you this fall. \nWelcome to Virginia Tech! I hope to see you this fall. \nWelcome to Virginia Tech! I hope to see you this fall. \n";
      //   var BOOK="H";
         var fontSize = 64;
         var lettersPerSide = 16;
