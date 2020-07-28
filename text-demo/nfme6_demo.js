@@ -216,7 +216,7 @@ var i=0;
         $("#container").append(renderer.domElement);
        // FIME (Text vIsualization for Musical Expression
         //var BOOK="Hello, NIME. This is fft spectrum testing. Make sure you allow to use the microphone. Sing some notes. The frequency of the note will change the height of the text.\n\n\n\nHello, NIME. This is fft spectrum testing. Make sure you allow to use the microphone. Sing some notes. The frequency of the note will change the height of the text.";
-        var BOOK="a  = merge (pattern(b.h.f,h.h.fp,e.q.p,b.q.fff,s.w), pattern2);\nreverb = new Reverb(\"tunnel\", 0.5, 0.2);\nfilter = new BiQuad(0.99, 0.05, 1);\na => reverb => filter => out;\na.loop();\n\nb = loadSample(\"sample1.wav\", \"sync\", bpm);\nreverb2 = new Reverb(\"cave\", 0.5, 0.2);\nsine = new LFO(\"sine\", 8);\nb => reverb2 => out;\nsine.out =>  b.level;b.play();\n\n\n\\\\Press Play button below to start.";
+        var BOOK="a  = merge (pattern(b.h.f,h.h.fp,e.q.p,b.q.fff,s.w), pattern2);\nreverb = new Reverb(\"tunnel\", 0.5, 0.2);\nfilter = new BiQuad(0.99, 0.05, 1);\na => reverb => filter => out;\na.loop();\n\nb = loadSample(\"sample1.wav\", \"sync\", bpm);\nreverb2 = new Reverb(\"cave\", 0.5, 0.2);\nsine = new LFO(\"sine\", 8);\nb => reverb2 => out;\nsine.out =>  b.level;b.play();\n\n\n\\\\Press Play button below to start.\n\\\\Drag and drop to move the text.";
         var fontSize = 32;
         var lettersPerSide = 16;
        
